@@ -16,12 +16,13 @@
       <li><a href="/uci"  {% if active == 'uci'  %}class="active"{% endif %}>Use case intelligence</a></li>
     </ul>
   </nav>
-
+ 
+  {% block body_override %}
   <main class="main">
     {% block content %}{% endblock %}
   </main>
-
-  <script src="/static/js/main.js"></script>
+  {% endblock %}
+ 
   {% block scripts %}{% endblock %}
 </body>
 </html>
