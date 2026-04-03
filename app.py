@@ -18,7 +18,7 @@ def webhook():
     mac = hmac.new(secret, msg=request.data, digestmod=hashlib.sha1)
     if not hmac.compare_digest('sha1=' + mac.hexdigest(), signature):
         return 'Invalid signature', 403
-    repo = git.Repo('/home/yourusername/sc-toolkit')  # ← update username
+    repo = git.Repo('/home/brfrancis/sc-toolkit')
     repo.remotes.origin.pull()
     return 'Updated successfully', 200
 
