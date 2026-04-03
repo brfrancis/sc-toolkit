@@ -23,6 +23,20 @@ window.addEventListener('load', function () {
   let height = svgEl.parentElement.clientHeight || 600;
   svg.attr('width', width).attr('height', height);
 
+  const defs = svg.append('defs');
+  defs.append('marker')
+    .attr('id', 'edge-arrow')
+    .attr('viewBox', '0 -5 10 10')
+    .attr('refX', 12)
+    .attr('refY', 0)
+    .attr('markerWidth', 5)
+    .attr('markerHeight', 5)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M0,-5L10,0L0,5')
+    .attr('fill', '#94a3b8')
+    .attr('fill-opacity', 0.75);
+
   const g = svg.append('g');
 
   svg.call(
@@ -35,6 +49,7 @@ window.addEventListener('load', function () {
   const allEdges = GRAPH_DATA.edges.map(d => ({ ...d }));
   const nodeById = {};
   allNodes.forEach(n => nodeById[n.id] = n);
+  const functionKeys = [...new Set(allNodes.map(n => n.function))];
 
   let activeFilter = '';
   let searchTerm   = '';
@@ -60,11 +75,37 @@ window.addEventListener('load', function () {
     return 0.2;
   }
 
+  function computeFunctionCenters() {
+    const radius = Math.min(width, height) * 0.28;
+    const cx = width / 2;
+    const cy = height / 2;
+    const centers = {};
+    functionKeys.forEach((fn, i) => {
+      const angle = (i / Math.max(functionKeys.length, 1)) * Math.PI * 2;
+      centers[fn] = {
+        x: cx + Math.cos(angle) * radius,
+        y: cy + Math.sin(angle) * radius,
+      };
+    });
+    return centers;
+  }
+  let functionCenters = computeFunctionCenters();
+
   const sim = d3.forceSimulation(allNodes)
-    .force('link',    d3.forceLink(allEdges).id(d => d.id).distance(55).strength(0.4))
+    .force('link',    d3.forceLink(allEdges).id(d => d.id).distance(d => {
+      const src = nodeById[d.source.id || d.source];
+      const tgt = nodeById[d.target.id || d.target];
+      return src && tgt && src.function === tgt.function ? 35 : 90;
+    }).strength(d => {
+      const src = nodeById[d.source.id || d.source];
+      const tgt = nodeById[d.target.id || d.target];
+      return src && tgt && src.function === tgt.function ? 0.75 : 0.25;
+    }))
     .force('charge',  d3.forceManyBody().strength(-60))
     .force('center',  d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide(12))
+    .force('collide', d3.forceCollide(13))
+    .force('x', d3.forceX(d => (functionCenters[d.function] || { x: width / 2 }).x).strength(0.09))
+    .force('y', d3.forceY(d => (functionCenters[d.function] || { y: height / 2 }).y).strength(0.09))
     .alphaDecay(0.025);
 
   const link = g.append('g')
@@ -73,7 +114,8 @@ window.addEventListener('load', function () {
     .join('line')
     .attr('stroke', '#94a3b8')
     .attr('stroke-width', 0.7)
-    .attr('stroke-opacity', 0.2);
+    .attr('stroke-opacity', 0.2)
+    .attr('marker-end', 'url(#edge-arrow)');
 
   const node = g.append('g')
     .selectAll('circle')
@@ -98,12 +140,12 @@ window.addEventListener('load', function () {
     .data(allNodes)
     .join('text')
     .text(d => d.id.length > 28 ? d.id.slice(0, 26) + '…' : d.id)
-    .attr('font-size', '9px')
+    .attr('font-size', '8px')
     .attr('fill', 'var(--text-muted, #888)')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '1.8em')
-    .style('pointer-events', 'none')
-    .style('display', 'none');
+    .attr('text-anchor', 'start')
+    .attr('dx', '0.6em')
+    .attr('dy', '0.3em')
+    .style('pointer-events', 'none');
 
   svg.on('click', () => deselectNode());
 
@@ -118,19 +160,27 @@ window.addEventListener('load', function () {
   function refresh() {
     node.attr('fill', nodeColor).attr('fill-opacity', nodeOpacity);
     link.attr('stroke-opacity', edgeOpacity);
+    label.attr('opacity', d => {
+      if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 0.95 : 0.08;
+      if (activeFilter && d.function !== activeFilter) return 0.18;
+      return 0.6;
+    });
   }
 
   function selectNode(d) {
     node
       .attr('stroke', n => n === d ? '#1a1a1a' : '#fff')
       .attr('stroke-width', n => n === d ? 2 : 1);
-    label.style('display', n => n === d ? 'block' : 'none');
+    label
+      .attr('font-weight', n => n === d ? 600 : 400)
+      .attr('opacity', n => n === d ? 1 : null);
     renderDetail(d);
   }
 
   function deselectNode() {
     node.attr('stroke', '#fff').attr('stroke-width', 1);
-    label.style('display', 'none');
+    label.attr('font-weight', 400);
+    refresh();
     detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
   }
 
@@ -185,8 +235,10 @@ window.addEventListener('load', function () {
     width  = svgEl.parentElement.clientWidth  || 800;
     height = svgEl.parentElement.clientHeight || 600;
     svg.attr('width', width).attr('height', height);
+    functionCenters = computeFunctionCenters();
     sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.1).restart();
   });
 
+  refresh();
   info.textContent = `${allNodes.length} use cases · ${allEdges.length} relationships · drag to pan · scroll to zoom · click a node`;
 });
