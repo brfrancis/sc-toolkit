@@ -1,6 +1,6 @@
 # sc-toolkit
 
-A collection of Python tools for Solutions Consulting in insurance AI — demo environment generators, data pipeline utilities, and workflow automation for pre-sales and GTM execution in the London Market.
+A collection of Python tools for Solutions Consulting in AI — demo environment generators, data pipeline utilities, and workflow automation for pre-sales and GTM execution.
 
 Built and maintained by [Ben Francis](https://www.linkedin.com/in/ben-r-francis) | PhD Biostatistics | EMEA Solutions Consulting Lead, Indico Data
 
