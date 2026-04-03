@@ -112,15 +112,24 @@ def uci_index():
     data_dir = os.path.join(os.path.dirname(__file__), 'usecase_intelligence', 'data')
     
     nodes = []
+    seen_node_ids = set()
     functions = set()
     with open(os.path.join(data_dir, 'use_cases.csv')) as f:
         for row in csv.DictReader(f):
-            nodes.append({'id': row['Use Case'], 'function': row['Function'], 'department': row['Department']})
+            node_id = row['Use Case']
+            if node_id in seen_node_ids:
+                continue
+            seen_node_ids.add(node_id)
+            nodes.append({'id': node_id, 'function': row['Function'], 'department': row['Department']})
             functions.add(row['Function'])
     
     edges = []
     with open(os.path.join(data_dir, 'relationships.csv')) as f:
         for row in csv.DictReader(f):
+            source = row['From Use Case']
+            target = row['To Use Case']
+            if source not in seen_node_ids or target not in seen_node_ids:
+                continue
             edges.append({'source': row['From Use Case'], 'target': row['To Use Case'], 'scope': row['Relationship Scope']})
     
     graph_json = _json.dumps({'nodes': nodes, 'edges': edges})
@@ -131,6 +140,8 @@ def uci_index():
         active='uci',
         functions=functions_list,
         graph_json=graph_json,
+        node_count=len(nodes),
+        edge_count=len(edges),
     )
 
 

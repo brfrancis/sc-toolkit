@@ -149,7 +149,7 @@ Enterprise Apps - Integration and Extensibility,Finance Systems Connectivity & I
 Insights - Lead Conversion Analytics,Demand & Sales Forecasting,Marketing,Supply Chain,Between Functions,Marketing → Supply Chain
 Sales & Operations Planning,Capital Budgeting & Forecasting,Supply Chain,Finance,Between Functions,Supply Chain → Finance
 Inventory Turnover,Working Capital Management,Supply Chain,Finance,Between Functions,Supply Chain → Finance
-Order Management & Outbound Logistics,Lifecycle - Customer Satisfaction,Supply Chain,Marketing,Between Functions,Supply Chain → Marketing
+Order Management & Outbound Logistics,Customer Satisfaction,Supply Chain,Marketing,Between Functions,Supply Chain → Marketing
 Vendor Risk Management,Supplier Lifecycle Analytics,IT,Supply Chain,Between Functions,IT → Supply Chain
 User Access Controls,SoX Compliance,IT,Finance,Between Functions,IT → Finance
 Security Operations,IT & Operational Audit,IT,Finance,Between Functions,IT → Finance
