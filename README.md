@@ -42,6 +42,8 @@ Accepts an JSON of extractions of CDR fields into a staging or Bronze layer of a
 **Output:** *(coming soon)* 
 **Live:** *(coming soon)*
 
+---
+
 ## Background
 
 These tools sit at the intersection of domain knowledge and applied AI — specifically the London Market workflows around underwriting submission processing, delegated authority, and claims.
@@ -68,8 +70,8 @@ Each tool has its own directory with a `README.md` covering setup, inputs, outpu
 ```
 sc-toolkit/
 ├── demo-landing-page/
-├── bordereaux-normaliser/
-├── submission-triage-simulator/
+├── CDR-data-warehouse/
+├── blueprint-use-case/
 └── utils/
 ```
 
