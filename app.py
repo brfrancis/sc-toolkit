@@ -18,7 +18,7 @@ def webhook():
     mac = hmac.new(secret, msg=request.data, digestmod=hashlib.sha1)
     if not hmac.compare_digest('sha1=' + mac.hexdigest(), signature):
         return 'Invalid signature', 403
-    repo = git.Repo('/home/brfrancis/sc-toolkit')  # ← update username
+    repo = git.Repo('/home/brfrancis/sc-toolkit')
     repo.remotes.origin.pull()
     return 'Updated successfully', 200
 
@@ -108,13 +108,29 @@ def cdr_process():
 # ── Use case intelligence ──────────────────────────────────────────────────
 @app.route('/uci')
 def uci_index():
-    from usecase_intelligence.taxonomy import load_taxonomy
-    taxonomy  = load_taxonomy()
-    functions = list(taxonomy.keys())
+    import csv, json as _json, os
+    data_dir = os.path.join(os.path.dirname(__file__), 'usecase_intelligence', 'data')
+    
+    nodes = []
+    functions = set()
+    with open(os.path.join(data_dir, 'use_cases.csv')) as f:
+        for row in csv.DictReader(f):
+            nodes.append({'id': row['Use Case'], 'function': row['Function'], 'department': row['Department']})
+            functions.add(row['Function'])
+    
+    edges = []
+    with open(os.path.join(data_dir, 'relationships.csv')) as f:
+        for row in csv.DictReader(f):
+            edges.append({'source': row['From Use Case'], 'target': row['To Use Case'], 'scope': row['Relationship Scope']})
+    
+    graph_json = _json.dumps({'nodes': nodes, 'edges': edges})
+    functions_list = sorted(functions)
+    
     return render_template(
         'usecase-intelligence/index.html',
         active='uci',
-        functions=functions,
+        functions=functions_list,
+        graph_json=graph_json,
     )
 
 
