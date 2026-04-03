@@ -1,4 +1,4 @@
-(function () {
+window.addEventListener('load', function () {
 
   const COLORS = {
     'Finance':         '#3b82f6',
@@ -8,12 +8,19 @@
     'Human Resources': '#8b5cf6',
   };
 
-  const svg    = d3.select('#uci-graph');
+  const svgEl  = document.getElementById('uci-graph');
   const detail = document.getElementById('node-detail');
   const info   = document.getElementById('graph-info');
 
-  let width  = svg.node().parentElement.clientWidth;
-  let height = svg.node().parentElement.clientHeight;
+  if (!svgEl || typeof GRAPH_DATA === 'undefined' || typeof d3 === 'undefined') {
+    if (info) info.textContent = 'Graph failed to initialise — check console.';
+    console.error('Missing: svgEl=' + !!svgEl + ' GRAPH_DATA=' + (typeof GRAPH_DATA) + ' d3=' + (typeof d3));
+    return;
+  }
+
+  const svg = d3.select(svgEl);
+  let width  = svgEl.parentElement.clientWidth  || 800;
+  let height = svgEl.parentElement.clientHeight || 600;
   svg.attr('width', width).attr('height', height);
 
   const g = svg.append('g');
@@ -26,13 +33,11 @@
 
   const allNodes = GRAPH_DATA.nodes.map(d => ({ ...d }));
   const allEdges = GRAPH_DATA.edges.map(d => ({ ...d }));
-
   const nodeById = {};
   allNodes.forEach(n => nodeById[n.id] = n);
 
   let activeFilter = '';
   let searchTerm   = '';
-  let selectedNode = null;
 
   function nodeColor(d) {
     if (activeFilter && d.function !== activeFilter) return '#94a3b8';
@@ -40,9 +45,7 @@
   }
 
   function nodeOpacity(d) {
-    if (searchTerm) {
-      return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.15;
-    }
+    if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.12;
     if (activeFilter && d.function !== activeFilter) return 0.15;
     return 0.85;
   }
@@ -54,29 +57,29 @@
       if (!src || !tgt) return 0;
       if (src.function !== activeFilter && tgt.function !== activeFilter) return 0;
     }
-    return 0.25;
+    return 0.2;
   }
 
   const sim = d3.forceSimulation(allNodes)
-    .force('link',   d3.forceLink(allEdges).id(d => d.id).distance(60).strength(0.3))
-    .force('charge', d3.forceManyBody().strength(-80))
-    .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collide', d3.forceCollide(14))
-    .alphaDecay(0.02);
+    .force('link',    d3.forceLink(allEdges).id(d => d.id).distance(55).strength(0.4))
+    .force('charge',  d3.forceManyBody().strength(-60))
+    .force('center',  d3.forceCenter(width / 2, height / 2))
+    .force('collide', d3.forceCollide(12))
+    .alphaDecay(0.025);
 
   const link = g.append('g')
     .selectAll('line')
     .data(allEdges)
     .join('line')
     .attr('stroke', '#94a3b8')
-    .attr('stroke-width', 0.8)
-    .attr('stroke-opacity', 0.25);
+    .attr('stroke-width', 0.7)
+    .attr('stroke-opacity', 0.2);
 
   const node = g.append('g')
     .selectAll('circle')
     .data(allNodes)
     .join('circle')
-    .attr('r', 6)
+    .attr('r', 5)
     .attr('fill', nodeColor)
     .attr('fill-opacity', nodeOpacity)
     .attr('stroke', '#fff')
@@ -96,7 +99,7 @@
     .join('text')
     .text(d => d.id.length > 28 ? d.id.slice(0, 26) + '…' : d.id)
     .attr('font-size', '9px')
-    .attr('fill', 'var(--text-muted)')
+    .attr('fill', 'var(--text-muted, #888)')
     .attr('text-anchor', 'middle')
     .attr('dy', '1.8em')
     .style('pointer-events', 'none')
@@ -118,17 +121,17 @@
   }
 
   function selectNode(d) {
-    selectedNode = d;
-    node.attr('stroke', n => n === d ? '#1a1a1a' : '#fff').attr('stroke-width', n => n === d ? 2 : 1);
+    node
+      .attr('stroke', n => n === d ? '#1a1a1a' : '#fff')
+      .attr('stroke-width', n => n === d ? 2 : 1);
     label.style('display', n => n === d ? 'block' : 'none');
     renderDetail(d);
   }
 
   function deselectNode() {
-    selectedNode = null;
     node.attr('stroke', '#fff').attr('stroke-width', 1);
     label.style('display', 'none');
-    detail.innerHTML = '<div class="nd-empty">Click a node to see details and relationships.</div>';
+    detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
   }
 
   function renderDetail(d) {
@@ -153,8 +156,8 @@
         <span>${d.function}</span>
         <span>${d.department}</span>
       </div>
-      ${out.length ? `<div class="nd-rels"><h4>Leads to (${out.length})</h4>${outHtml}${out.length > 8 ? `<div class="nd-scope" style="padding-top:4px">+${out.length-8} more</div>` : ''}</div>` : ''}
-      ${into.length ? `<div class="nd-rels"><h4>Comes from (${into.length})</h4>${inHtml}${into.length > 8 ? `<div class="nd-scope" style="padding-top:4px">+${into.length-8} more</div>` : ''}</div>` : ''}
+      ${out.length ? `<div class="nd-rels"><h4>Leads to (${out.length})</h4>${outHtml}${out.length > 8 ? `<div class="nd-scope" style="padding-top:4px">+${out.length - 8} more</div>` : ''}</div>` : ''}
+      ${into.length ? `<div class="nd-rels"><h4>Comes from (${into.length})</h4>${inHtml}${into.length > 8 ? `<div class="nd-scope" style="padding-top:4px">+${into.length - 8} more</div>` : ''}</div>` : ''}
       ${!out.length && !into.length ? '<div class="nd-scope" style="padding-top:8px">No relationships defined</div>' : ''}
     `;
   }
@@ -170,22 +173,20 @@
     if (searchTerm) {
       const match = allNodes.find(n => n.id.toLowerCase().includes(searchTerm.toLowerCase()));
       if (match && match.x) {
-        const t = d3.zoomTransform(svg.node());
         svg.transition().duration(400).call(
           d3.zoom().transform,
-          d3.zoomIdentity.translate(width/2 - match.x, height/2 - match.y).scale(1.5)
+          d3.zoomIdentity.translate(width / 2 - match.x, height / 2 - match.y).scale(1.8)
         );
       }
     }
   });
 
   window.addEventListener('resize', () => {
-    width  = svg.node().parentElement.clientWidth;
-    height = svg.node().parentElement.clientHeight;
+    width  = svgEl.parentElement.clientWidth  || 800;
+    height = svgEl.parentElement.clientHeight || 600;
     svg.attr('width', width).attr('height', height);
-    sim.force('center', d3.forceCenter(width/2, height/2)).alpha(0.1).restart();
+    sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.1).restart();
   });
 
   info.textContent = `${allNodes.length} use cases · ${allEdges.length} relationships · drag to pan · scroll to zoom · click a node`;
-
-})();
+});
