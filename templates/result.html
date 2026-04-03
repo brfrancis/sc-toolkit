@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ client_name }} — Demo{% endblock %}
+{% block content %}
+<div class="demo-output">
+  <div class="demo-header">
+    <h1>{{ client_name }}</h1>
+    <span class="badge">{{ use_case_label }}</span>
+    <span class="badge badge-secondary">{{ stakeholder }}</span>
+  </div>
+
+  <div class="demo-section">
+    <h2>What we will show you today</h2>
+    <p>An end-to-end demonstration of how Indico's agentic AI platform handles {{ use_case_label | lower }} for {{ client_name }}, from raw document ingestion through to structured, decision-ready outputs.</p>
+  </div>
+
+  <div class="demo-section">
+    <h2>Key fields being extracted</h2>
+    <ul class="field-list">
+      {% for field in fields %}
+      <li>{{ field }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="demo-section">
+    <h2>Value for the {{ stakeholder }}</h2>
+    <p>{{ stakeholder_value }}</p>
+  </div>
+</div>
+{% endblock %}

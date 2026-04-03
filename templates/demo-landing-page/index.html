@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}sc-toolkit{% endblock %}
+{% block content %}
+<div class="hero">
+  <h1>sc-toolkit</h1>
+  <p class="hero-sub">Python tools for Solutions Consulting in insurance AI — built from live engagements in the London Market.</p>
+</div>
+
+<div class="tool-grid">
+  <a class="tool-card" href="/demo">
+    <h2>Demo landing page</h2>
+    <p>Generate a client-specific HTML landing page for a demo session — scoped to use case, key fields, and stakeholder focus.</p>
+    <span class="tag">Flask · Jinja2</span>
+  </a>
+
+  <a class="tool-card" href="/cdr">
+    <h2>CDR data warehouse</h2>
+    <p>Transform Indico JSON extraction output (bronze) into CDR v3.2-aligned silver and gold datasets.</p>
+    <span class="tag">pandas · CDR v3.2</span>
+  </a>
+
+  <a class="tool-card" href="/uci">
+    <h2>Use case intelligence</h2>
+    <p>Map customer workflow descriptions to a structured taxonomy via fine-tuned LLM, then recommend next steps via an adjacency network.</p>
+    <span class="tag">OpenAI · network graph</span>
+  </a>
+</div>
+{% endblock %}

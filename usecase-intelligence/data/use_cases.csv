@@ -1,0 +1,355 @@
+Function,Department,Use Case
+Finance,Tax,"Tax Planning, Analysis & Efficiency"
+Finance,Tax,Tax Budgeting & Forecasting
+Finance,Tax,Corporate & Business Tax Calculations
+Finance,Tax,Tax Regulatory Compliance
+Finance,Tax,Tax Apportionment
+Finance,Tax,Tax Transfer Pricing
+Finance,Tax,"Tax Form Processing, Reading & Population"
+Finance,Tax,Indirect Tax Calculations
+Finance,Tax,Tax Dispute Management
+Finance,Tax,Tax Provisioning
+Finance,Tax,Sales / Use Tax Calculations
+Finance,FP&A,Capital Budgeting & Forecasting
+Finance,FP&A,Reconciliation of Financial & Operational Systems
+Finance,FP&A,What-if Analysis & Scenario Modelling
+Finance,FP&A,Demand Planning & Forecasting
+Finance,FP&A,Continuous Reforecasting
+Finance,FP&A,Pricing Strategy & Analysis
+Finance,FP&A,ESG & Non-Financial Data Integration
+Finance,FP&A,Management Reporting / KPI Analysis
+Finance,FP&A,Segmentation (Customer/Product/Business Unit)
+Finance,FP&A,Real Estate Planning
+Finance,FP&A,Strategic Sales Analysis & Forecasting
+Finance,Audit,Control Design & Operating Effectiveness
+Finance,Audit,Continuous Auditing & Monitoring
+Finance,Audit,Key Control Testing & Monitoring
+Finance,Audit,Fraud Detection
+Finance,Audit,IT General Controls Testing
+Finance,Audit,Visual Audit Planning & Scoping
+Finance,Audit,Financial & Regulatory Risk Assessment & Remediation
+Finance,Audit,Expense & Claims Audit
+Finance,Audit,Full Population Testing
+Finance,Audit,Findings / Incident Remediation
+Finance,Audit,IT & Operational Audit
+Finance,Audit,SoX Compliance
+Finance,Audit,Risk Management Reporting
+Finance,Audit,Application Control Testing
+Finance,Audit,Advanced Analytics Controls Testing
+Finance,Accounting & Operations,General Ledger Management
+Finance,Accounting & Operations,Journal Entry Processing
+Finance,Accounting & Operations,Accrual Automation
+Finance,Accounting & Operations,AP / AR Controls & Digitization
+Finance,Accounting & Operations,Foreign Exchange Accounting
+Finance,Accounting & Operations,Inter/Intra Company Accounting
+Finance,Accounting & Operations,Period-End Close
+Finance,Accounting & Operations,Cash Applications
+Finance,Accounting & Operations,Fixed Asset Accounting
+Finance,Accounting & Operations,Project Budgeting & Accounting
+Finance,Accounting & Operations,Financial Consolidation
+Finance,Accounting & Operations,Financial Statement Reconciliations
+Finance,Accounting & Operations,Expense & Department Allocations
+Finance,Accounting & Operations,Late Payment Management & Forecasting
+Finance,Accounting & Operations,Profitability Analysis
+Finance,Accounting & Operations,Shared Service Center Management & Cost Allocations
+Finance,Accounting & Operations,PO / Invoice Creation & Management
+Finance,Treasury,Working Capital Management
+Finance,Treasury,Funding & Liquidity Management
+Finance,Treasury,Corporate Finance Modelling
+Finance,Treasury,Loan Payment Scheduling
+Finance,Treasury,Cash Flow Forecasting
+Finance,Treasury,FX / IR / CMD Hedging Operations
+Finance,Treasury,Cash Repatriation
+Finance,Investor Relations,Stakeholder & Investor Communications
+Finance,Investor Relations,Annual Report & Disclosure Preparation
+Finance,Investor Relations,Organizational Valuation Analysis
+Finance,Investor Relations,Investor Marketing Data & Artifacts
+Finance,Investor Relations,M&A Reporting
+Finance,Investor Relations,ESG Reporting
+Finance,Financial Control & Policies,Financial Control Framework
+Finance,Financial Control & Policies,Financial Policy Management
+Finance,Financial Control & Policies,Finance Data Model Maintenance
+Finance,Financial Control & Policies,Finance Systems Connectivity & Interoperability
+Finance,Financial Control & Policies,Sustainability Controls
+Finance,Financial Control & Policies,Process Management & Auditability
+Finance,Financial Control & Policies,Reconciliation Monitoring
+Finance,Financial Control & Policies,Document Digitization & Generation
+Finance,Statutory & Regulatory Reporting,Group Financial Statements
+Finance,Statutory & Regulatory Reporting,IFRS/GAAP Reporting
+Finance,Statutory & Regulatory Reporting,Local Entity Financial Statements
+Finance,Statutory & Regulatory Reporting,Digital Language Conversion
+Finance,Statutory & Regulatory Reporting,Multi-Jurisdictional Reporting
+Finance,Statutory & Regulatory Reporting,Foreign Entity Regulatory Returns
+Finance,Statutory & Regulatory Reporting,Statistical Reporting
+Finance,Statutory & Regulatory Reporting,Prudential Reporting
+Finance,Management & Performance Reporting,Group Submissions
+Finance,Management & Performance Reporting,Business Performance Reporting
+Finance,Management & Performance Reporting,Project Reporting
+Finance,Management & Performance Reporting,KPI Analysis & Benchmarking
+Finance,Management & Performance Reporting,Operational Reporting
+Finance,Management & Performance Reporting,Cost Management Reporting
+Finance,Management & Performance Reporting,ALCO Reporting
+Finance,Transformation Office,Project & Program Management / PMO
+Finance,Transformation Office,Regulatory Transformation
+Finance,Transformation Office,Scenario Planning
+Finance,Transformation Office,Change Management
+Finance,Transformation Office,Business Process Optimization
+Finance,Transformation Office,EUC / EUDA (e.g. macro) Decommission
+Finance,Transformation Office,Testing & Prototyping
+Finance,Transformation Office,Agile Project Reporting
+Finance,Transformation Office,Financial Software Asset Management
+Finance,Transformation Office,Operational Excellence & Resilience
+Finance,Transformation Office,Upskilling / Learning & Development
+Finance,Transformation Office,Accounting & Reporting Standards
+Finance,Transformation Office,Communications
+Supply Chain,Strategic Planning,Sales & Operations Planning
+Supply Chain,Strategic Planning,Capacity Planning
+Supply Chain,Strategic Planning,Customer Satisfaction
+Supply Chain,Strategic Planning,KPI Measurement
+Supply Chain,Strategic Planning,Resource Planning & Scheduling
+Supply Chain,Strategic Planning,Customer Sentiment Analysis
+Supply Chain,Strategic Planning,Gross Margin Return on Investment (GMROI)
+Supply Chain,Strategic Planning,Real Estate Planning
+Supply Chain,Strategic Planning,Referral Analysis
+Supply Chain,Strategic Planning,Logistics Management
+Supply Chain,Strategic Planning,Statistical / What-If Forecasting
+Supply Chain,Strategic Planning,Customer Availability KPI
+Supply Chain,Strategic Planning,Product Networking Analysis
+Supply Chain,Strategic Planning,ESG Strategy
+Supply Chain,Strategic Planning,Cost Optimization
+Supply Chain,Strategic Planning,End-to-end simulation
+Supply Chain,Strategic Planning,Site Selection Optimization
+Supply Chain,"Sourcing, Procurement & Logistics",Supplier Lifecycle Analytics
+Supply Chain,"Sourcing, Procurement & Logistics",Receipt Confirmation Analytics
+Supply Chain,"Sourcing, Procurement & Logistics",Consolidation Analytics
+Supply Chain,"Sourcing, Procurement & Logistics",Supplier Selection & RFP Management
+Supply Chain,"Sourcing, Procurement & Logistics",Invoice Management Optimization
+Supply Chain,"Sourcing, Procurement & Logistics",Supplier Data Share
+Supply Chain,"Sourcing, Procurement & Logistics",Balanced Scorecards
+Supply Chain,"Sourcing, Procurement & Logistics",Make vs Buy
+Supply Chain,"Sourcing, Procurement & Logistics",Delivery Pattern Optimization
+Supply Chain,"Sourcing, Procurement & Logistics",Contract Management Analytics & Compliance
+Supply Chain,"Sourcing, Procurement & Logistics",Fraud Detection
+Supply Chain,"Sourcing, Procurement & Logistics",Supplier Scorecards
+Supply Chain,"Sourcing, Procurement & Logistics",Purchase Order Processing
+Supply Chain,"Sourcing, Procurement & Logistics",IT & Software Asset Management
+Supply Chain,"Sourcing, Procurement & Logistics",Lead Time Optimization
+Supply Chain,"Sourcing, Procurement & Logistics",Logistics Route Optimization
+Supply Chain,"Sourcing, Procurement & Logistics",SLA Analysis
+Supply Chain,"Sourcing, Procurement & Logistics",Procurement Analytics
+Supply Chain,Demand Planning,Product Portfolio Management
+Supply Chain,Demand Planning,Demand & Sales Forecasting
+Supply Chain,Demand Planning,SKU Rationalization / Inventory Optimization
+Supply Chain,Demand Planning,Price Point Analysis & Optimization
+Supply Chain,Demand Planning,Inventory Trends & Assortment Planning
+Supply Chain,Demand Planning,Loyalty Program Analysis
+Supply Chain,Demand Planning,Seasonal Planning
+Supply Chain,Demand Planning,External Factor Planning
+Supply Chain,Demand Planning,Trade Promotion Management & Optimization
+Supply Chain,Demand Planning,Customer Analysis & Segmentation
+Supply Chain,Demand Planning,Markdown and Waste Analysis
+Supply Chain,Supply Planning,Inbound Logistics
+Supply Chain,Supply Planning,Just-in-Time Inventory Optimization
+Supply Chain,Supply Planning,Network Risk & Vulnerability Alert
+Supply Chain,Supply Planning,Buffer / Safety Stock Optimization
+Supply Chain,Supply Planning,Material Management Optimization
+Supply Chain,Supply Planning,Supply Planning Automation
+Supply Chain,Supply Planning,Backorder Analytics
+Supply Chain,Supply Planning,Goods-In Smoothing
+Supply Chain,Manufacturing & Production,Physical Asset Management
+Supply Chain,Manufacturing & Production,Predictive Maintenance
+Supply Chain,Manufacturing & Production,Quality Management
+Supply Chain,Manufacturing & Production,Machine up-time optimization
+Supply Chain,Manufacturing & Production,Production Planning & Scheduling
+Supply Chain,Manufacturing & Production,On-machine data sourcing & analysis
+Supply Chain,Manufacturing & Production,Production Line Optimization
+Supply Chain,Manufacturing & Production,Product Safety
+Supply Chain,Warehouse & Inventory Management,Warehouse Efficiency
+Supply Chain,Warehouse & Inventory Management,Perfect Order Fulfillment
+Supply Chain,Warehouse & Inventory Management,Dead Stock Forecasting
+Supply Chain,Warehouse & Inventory Management,Layout Optimization
+Supply Chain,Warehouse & Inventory Management,Inventory Turnover
+Supply Chain,Warehouse & Inventory Management,Pick Accuracy Reporting
+Supply Chain,Warehouse & Inventory Management,Days Sales in Inventory
+Supply Chain,Warehouse & Inventory Management,Warehouse Range Insights
+Supply Chain,Warehouse & Inventory Management,Storage Cost Management
+Supply Chain,Warehouse & Inventory Management,Streaming / Trunking Optimization
+Supply Chain,Warehouse & Inventory Management,Stockout Detection & Prevention
+Supply Chain,Warehouse & Inventory Management,Code-life Alerting
+Supply Chain,Warehouse & Inventory Management,Order Fill Rate
+Supply Chain,Warehouse & Inventory Management,Pick Location Optimization
+Supply Chain,Warehouse & Inventory Management,Return Management & Reverse Logistics
+Supply Chain,Warehouse & Inventory Management,Stock Record Management
+Supply Chain,Warehouse & Inventory Management,Order Management & Outbound Logistics
+Supply Chain,Warehouse & Inventory Management,Robotics Optimization
+Supply Chain,Warehouse & Inventory Management,Fill Rate Analysis
+Supply Chain,Warehouse & Inventory Management,Quality Alerting
+Supply Chain,Transportation & Distribution,Distribution Center Optimization
+Supply Chain,Transportation & Distribution,On-Time In-Full Delivery
+Supply Chain,Transportation & Distribution,Route Optimization
+Supply Chain,Transportation & Distribution,Packaging Management Optimization
+Supply Chain,Transportation & Distribution,Container Loading & Tracking
+Supply Chain,Transportation & Distribution,Trade Regulation & Subsidy Impact Analysis
+Supply Chain,Transportation & Distribution,Distribution Management
+Supply Chain,Transportation & Distribution,Vehicle Rounding
+Supply Chain,Transportation & Distribution,Truck Capacity Optimization
+Supply Chain,Transportation & Distribution,Shipment Status Insight
+Supply Chain,Transportation & Distribution,Batch & Lot Tracking
+Supply Chain,Transportation & Distribution,Carrier Selection
+Supply Chain,Transportation & Distribution,Goods-Out Smoothing
+Supply Chain,Transportation & Distribution,Palette Optimization
+IT,IT Strategy & Transformation,Capital Expenditure ROI / Operating Expenditure TCO Analysis
+IT,IT Strategy & Transformation,Change Management
+IT,IT Strategy & Transformation,Disaster Recovery and Business Continuity
+IT,IT Strategy & Transformation,Management Reporting / KPI Analysis
+IT,IT Strategy & Transformation,Chargeback Model Analysis
+IT,IT Strategy & Transformation,Process & Technical Documentation
+IT,IT Strategy & Transformation,Project and Program Management / PMO
+IT,IT Strategy & Transformation,RPA Integration
+IT,IT Strategy & Transformation,Technology Debt & Consolidation
+IT,IT Operations & Support,SERVICE DESK - Outage / Incident and Root Cause Analysis
+IT,IT Operations & Support,SERVICE DESK - Resource Capacity Planning
+IT,IT Operations & Support,SERVICE DESK - SLA Monitoring
+IT,IT Operations & Support,SERVICE DESK - System Availability
+IT,IT Operations & Support,SERVICE DESK - Ticket Management & Escalation
+IT,IT Operations & Support,Field Operation Tracking
+IT,IT Operations & Support,Active Directory Maintenance
+IT,IT Operations & Support,Account Provisioning and Maintenance
+IT,IT Operations & Support,ITAM - Hardware Asset Management
+IT,IT Operations & Support,ITAM - Software Asset Management
+IT,IT Operations & Support,ITAM - CMDB Management and Integration
+IT,IT Operations & Support,M&A IT Integration Strategy
+IT,Procurement & Vendor Relationship Management,Spend Forecasting & Optimization
+IT,Procurement & Vendor Relationship Management,Contract Negotiations
+IT,Procurement & Vendor Relationship Management,Vendor Performance and SLA Monitoring
+IT,Procurement & Vendor Relationship Management,Vendor Risk Management
+IT,Procurement & Vendor Relationship Management,Vendor Scorecards
+IT,Procurement & Vendor Relationship Management,Mobile Device Management - Footprint and Utilization
+IT,Applications,APP DEV - No/Low-Code Maintenance
+IT,Applications,App Dev - Rapid Prototyping
+IT,Applications,App Dev - Ad Hoc Requests
+IT,Applications,Enterprise Apps - Integration and Extensibility
+IT,Applications,Enterprise Apps - Migration and Consolidation
+IT,Infrastructure,Cloud Cost Control Management
+IT,Infrastructure,Cloud Data Preparation
+IT,Infrastructure,Datacenter Optimization & Consolidation
+IT,Infrastructure,Network / Server Performance Monitoring and Reporting
+IT,Infrastructure,Predictive Maintenance
+IT,Infrastructure,Server Management - Software Updates and Patching
+IT,"Security, Compliance & Internal Risk Management",Firewall IP Address Whitelist Management
+IT,"Security, Compliance & Internal Risk Management",AI Ops - Intelligent Alerting
+IT,"Security, Compliance & Internal Risk Management",Fraud Detection
+IT,"Security, Compliance & Internal Risk Management",High Risk Region Hardware Tracking
+IT,"Security, Compliance & Internal Risk Management",PII Anonymization & Regulatory Compliance
+IT,"Security, Compliance & Internal Risk Management",IT Audit Application Control & Testing
+IT,"Security, Compliance & Internal Risk Management",IT Audit - Database Control & Testing
+IT,"Security, Compliance & Internal Risk Management",IT Audit - ITGC
+IT,"Security, Compliance & Internal Risk Management",Log Parsing and Analysis
+IT,"Security, Compliance & Internal Risk Management",User Access Controls
+IT,Information Security,Vulnerability Management
+IT,Information Security,Security Operations
+IT,Information Security,Security Policy Compliance Tracking
+IT,Information Security,Security Awareness
+Marketing,Demand & Lead Generation,Persona Profiling
+Marketing,Demand & Lead Generation,Webinar / Podcast / Blog Topic Modeling
+Marketing,Demand & Lead Generation,Events Data Collection & Analysis
+Marketing,Demand & Lead Generation,Gated Content Collection & Analysis
+Marketing,Demand & Lead Generation,Lead Scoring
+Marketing,Demand & Lead Generation,Lead Routing
+Marketing,Segmentation,Demographic / Psychographic
+Marketing,Segmentation,Customer Insight
+Marketing,Segmentation,"Recency, frequency, monetary value (RFM)"
+Marketing,Campaigns,Predictive Targeting
+Marketing,Campaigns,Attribution (MMM / MTA)
+Marketing,Campaigns,AB Testing
+Marketing,Campaigns,ROI Modeling
+Marketing,Field Marketing,Location-based Marketing
+Marketing,Digital Marketing,SEM - Keyword Bidding Analysis
+Marketing,Digital Marketing,SEO - Key Word Clustering
+Marketing,Digital Marketing,SEO Metrics collection from Tools
+Marketing,Digital Marketing,Display Ads - Ad Spend Analysis
+Marketing,Digital Marketing,Social Media - Engagement Analysis
+Marketing,Digital Marketing,Social Media - Social Listening
+Marketing,Digital Marketing,Social Media - Paid Social
+Marketing,Digital Marketing,Life Cycle - Email Marketing
+Marketing,Corporate Communications,Social Media - Organic Social Media
+Marketing,Corporate Communications,Media and PR - Brand Impact: Social Sentiment
+Marketing,Corporate Communications,Media and PR - Media Coverage Collection & Analysis
+Marketing,Corporate Communications,Media and PR - Media Reach Collection & Analysis
+Marketing,Corporate Communications,Media and PR - Share of Voice: Collection & Analysis
+Marketing,Corporate Communications,Internal Communications - Communication lists and scheduling
+Marketing,Strategic Initiatives & Operations,Enrichment - External Data Providers
+Marketing,Strategic Initiatives & Operations,"Integration - Customer 360 (Martech, CRM, ERP)"
+Marketing,Strategic Initiatives & Operations,Email - Email Touch Limit Optimization
+Marketing,Strategic Initiatives & Operations,Email - Email Insights
+Marketing,Strategic Initiatives & Operations,Marketing Automation - List Load Automation
+Marketing,Strategic Initiatives & Operations,Marketing Automation - Mapping UTM between MAP to CRM
+Marketing,Strategic Initiatives & Operations,Efficiency - Sales response time to qualified lead
+Marketing,Strategic Initiatives & Operations,Insights - Trial Conversion Analytics
+Marketing,Strategic Initiatives & Operations,Insights - Customer Database Health
+Marketing,Strategic Initiatives & Operations,Insights - Lead Conversion Analytics
+Marketing,Strategic Initiatives & Operations,Insights - Customer Behavior (Transaction/Usage)
+Marketing,Strategic Initiatives & Operations,Insights - Churn Rate / Retention Scoring
+Marketing,Strategic Initiatives & Operations,Marketing Audit - Data Quality Assurance
+Marketing,Strategic Initiatives & Operations,Ad Trafficking - Media Plan Activations
+Marketing,Strategic Initiatives & Operations,"Reporting - KPIs, Consolidation & Reporting"
+Marketing,Strategic Initiatives & Operations,Budgeting - Marketing Spend Analysis
+Marketing,Customer Experience,Lifecycle - Customer Lifetime Value (CLTV)
+Marketing,Customer Experience,Lifecycle - Pricing Strategy & Analysis
+Marketing,Customer Experience,Lifecycle - Market Basket
+Marketing,Customer Experience,Lifecycle - Recommendation Engine
+Marketing,Customer Experience,Lifecycle - Loyalty Program
+Marketing,Customer Experience,Lifecycle - Next Best Action (NBA)
+Marketing,Customer Experience,Lifecycle - Engagement Scoring
+Marketing,Customer Experience,Lifecycle - Net Promoter Score (NPS)
+Marketing,Customer Experience,Lifecycle - Survey Analysis
+Human Resources,Human Resource Planning,"KPIs, Consolidation & Reporting"
+Human Resources,Human Resource Planning,Workforce Forecasting
+Human Resources,Human Resource Planning,Headcount Analysis
+Human Resources,Human Resource Planning,Internal & External Benchmarking
+Human Resources,Human Resource Planning,Employee Commute & Real Estate Analytics
+Human Resources,Human Resource Planning,Employee Turnover / Attrition / Churn / Flight Risk
+Human Resources,Human Resource Planning,Absence Rate Analytics
+Human Resources,Human Resource Planning,Employee Retention Analysis
+Human Resources,Human Resource Planning,Benefits Analysis
+Human Resources,Human Resource Planning,Employee Engagement Analysis
+Human Resources,Human Resource Planning,Employee Satisfaction - Pulse Surveys and Net Promoter Score
+Human Resources,"Diversity, Equity, Inclusion, and Belonging","Pay Metrics & Transparency - Gender, Race, Ethnicity, Disability, Religion"
+Human Resources,"Diversity, Equity, Inclusion, and Belonging",Diversity & Inclusion Metrics
+Human Resources,"Diversity, Equity, Inclusion, and Belonging",Demographics Reporting & Forecasting
+Human Resources,"Diversity, Equity, Inclusion, and Belonging",Bias Analytics
+Human Resources,"Diversity, Equity, Inclusion, and Belonging",Length of Service and Age Banding Metrics
+Human Resources,Learning & Development,Automated Training Reporting
+Human Resources,Learning & Development,Required Training Email Notification Automation
+Human Resources,Learning & Development,Compliance Course Completion Rate Consolidation
+Human Resources,Learning & Development,Training Hours / Completed Metrics
+Human Resources,Learning & Development,Learning Activities Completed Analysis
+Human Resources,Learning & Development,Course Engagement Analysis
+Human Resources,Learning & Development,Training Cost Benefit Analysis
+Human Resources,"Operations, Policies & Controls",Onboarding Automation
+Human Resources,"Operations, Policies & Controls",Offboarding Automation
+Human Resources,"Operations, Policies & Controls",Flexibility Metrics
+Human Resources,"Operations, Policies & Controls",Productivity / Utilization
+Human Resources,"Operations, Policies & Controls",Health & Wellbeing Assessment
+Human Resources,"Operations, Policies & Controls",Policy Assessment
+Human Resources,"Operations, Policies & Controls",Employee Expense Management
+Human Resources,"Operations, Policies & Controls",Relocation & Mobility Solutions
+Human Resources,"Operations, Policies & Controls",Time Management & Payroll Automation
+Human Resources,"Operations, Policies & Controls",COVID-19 Management
+Human Resources,"Operations, Policies & Controls",Incident Metrics
+Human Resources,"Operations, Policies & Controls",Employee Schedule Automation
+Human Resources,Organizational Structure,Span of Control & Layers
+Human Resources,Organizational Structure,Org Structure Integrity Analysis
+Human Resources,Organizational Structure,Network Analysis
+Human Resources,Organizational Structure,Automated Org Structure Reporting
+Human Resources,Performance Management,Key Performance Metrics
+Human Resources,Performance Management,Promotion & Compensation Analysis
+Human Resources,Performance Management,Ethics & Compliance Analytics
+Human Resources,Performance Management,Disciplinary Action Analysis
+Human Resources,Recruitment & Selection,Resume & CV Screening Automation
+Human Resources,Recruitment & Selection,Recruitment Cycle Efficiency
+Human Resources,Recruitment & Selection,Internal vs External Hiring
+Human Resources,Recruitment & Selection,Hiring Source Analysis
+Human Resources,Recruitment & Selection,Candidate Feedback
+Human Resources,Recruitment & Selection,Hiring Cost Analysis
+Human Resources,Recruitment & Selection,Contract Analytics

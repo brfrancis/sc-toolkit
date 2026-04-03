@@ -1,0 +1,165 @@
+From Use Case,To Use Case,From Function,To Function,Relationship Scope,Relationship Label
+Tax Budgeting & Forecasting,Capital Budgeting & Forecasting,Finance,Finance,Within Function,Finance → Finance
+Tax Provisioning,Reconciliation of Financial & Operational Systems,Finance,Finance,Within Function,Finance → Finance
+"Tax Planning, Analysis & Efficiency",What-if Analysis & Scenario Modelling,Finance,Finance,Within Function,Finance → Finance
+Capital Budgeting & Forecasting,Control Design & Operating Effectiveness,Finance,Finance,Within Function,Finance → Finance
+What-if Analysis & Scenario Modelling,Risk Management Reporting,Finance,Finance,Within Function,Finance → Finance
+Demand Planning & Forecasting,Fraud Detection,Finance,Finance,Within Function,Finance → Finance
+Continuous Auditing & Monitoring,AP / AR Controls & Digitization,Finance,Finance,Within Function,Finance → Finance
+IT General Controls Testing,General Ledger Management,Finance,Finance,Within Function,Finance → Finance
+Risk Management Reporting,Period-End Close,Finance,Finance,Within Function,Finance → Finance
+Financial Consolidation,Funding & Liquidity Management,Finance,Finance,Within Function,Finance → Finance
+Foreign Exchange Accounting,Corporate Finance Modelling,Finance,Finance,Within Function,Finance → Finance
+AP / AR Controls & Digitization,Cash Flow Forecasting,Finance,Finance,Within Function,Finance → Finance
+ESG Reporting,Group Financial Statements,Finance,Finance,Within Function,Finance → Finance
+Annual Report & Disclosure Preparation,IFRS/GAAP Reporting,Finance,Finance,Within Function,Finance → Finance
+Scenario Planning,What-if Analysis & Scenario Modelling,Finance,Finance,Within Function,Finance → Finance
+Regulatory Transformation,Tax Regulatory Compliance,Finance,Finance,Within Function,Finance → Finance
+Business Process Optimization,General Ledger Management,Finance,Finance,Within Function,Finance → Finance
+Tax Regulatory Compliance,Indirect Tax Calculations,Finance,Finance,Within Function,Finance → Finance
+Demand Planning & Forecasting,Late Payment Management & Forecasting,Finance,Finance,Within Function,Finance → Finance
+Loan Payment Scheduling,Cash Applications,Finance,Finance,Within Function,Finance → Finance
+M&A Reporting,Group Financial Statements,Finance,Finance,Within Function,Finance → Finance
+Risk Management Reporting,Regulatory Transformation,Finance,Finance,Within Function,Finance → Finance
+Scenario Planning,Capital Budgeting & Forecasting,Finance,Finance,Within Function,Finance → Finance
+Scenario Planning,Cash Flow Forecasting,Finance,Finance,Within Function,Finance → Finance
+Change Management,General Ledger Management,Finance,Finance,Within Function,Finance → Finance
+Cash Flow Forecasting,Capital Budgeting & Forecasting,Finance,Finance,Within Function,Finance → Finance
+Reconciliation of Financial & Operational Systems,IT General Controls Testing,Finance,Finance,Within Function,Finance → Finance
+IFRS/GAAP Reporting,Business Performance Reporting,Finance,Finance,Within Function,Finance → Finance
+KPI Analysis & Benchmarking,Management Reporting / KPI Analysis,Finance,Finance,Within Function,Finance → Finance
+Sales & Operations Planning,Demand & Sales Forecasting,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Capacity Planning,Production Planning & Scheduling,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Logistics Management,Warehouse Efficiency,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Product Networking Analysis,Supplier Selection & RFP Management,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Statistical / What-If Forecasting,Trade Promotion Management & Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Supplier Selection & RFP Management,Purchase Order Processing,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Supplier Data Share,Supplier Scorecards,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Make vs Buy,Production Planning & Scheduling,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Contract Management Analytics & Compliance,Fraud Detection,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Lead Time Optimization,Logistics Route Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Demand & Sales Forecasting,Inventory Trends & Assortment Planning,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Price Point Analysis & Optimization,Loyalty Program Analysis,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Customer Analysis & Segmentation,Trade Promotion Management & Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Seasonal Planning,SKU Rationalization / Inventory Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Markdown and Waste Analysis,Inventory Turnover,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Inbound Logistics,Warehouse Efficiency,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Just-in-Time Inventory Optimization,Material Management Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Buffer / Safety Stock Optimization,Supply Planning Automation,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Backorder Analytics,Goods-In Smoothing,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Production Planning & Scheduling,Machine up-time optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Predictive Maintenance,Production Line Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+On-machine data sourcing & analysis,Quality Management,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Production Line Optimization,Product Safety,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Warehouse Efficiency,Perfect Order Fulfillment,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Dead Stock Forecasting,Stockout Detection & Prevention,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Pick Accuracy Reporting,Order Fill Rate,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Stock Record Management,Inventory Turnover,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Return Management & Reverse Logistics,Order Management & Outbound Logistics,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Distribution Center Optimization,On-Time In-Full Delivery,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Route Optimization,Truck Capacity Optimization,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Container Loading & Tracking,Batch & Lot Tracking,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Trade Regulation & Subsidy Impact Analysis,Distribution Management,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Shipment Status Insight,Carrier Selection,Supply Chain,Supply Chain,Within Function,Supply Chain → Supply Chain
+Change Management,Process & Technical Documentation,IT,IT,Within Function,IT → IT
+Project and Program Management / PMO,Technology Debt & Consolidation,IT,IT,Within Function,IT → IT
+Disaster Recovery and Business Continuity,M&A IT Integration Strategy,IT,IT,Within Function,IT → IT
+Management Reporting / KPI Analysis,Chargeback Model Analysis,IT,IT,Within Function,IT → IT
+RPA Integration,ITAM - CMDB Management and Integration,IT,IT,Within Function,IT → IT
+SERVICE DESK - Outage / Incident and Root Cause Analysis,SERVICE DESK - SLA Monitoring,IT,IT,Within Function,IT → IT
+SERVICE DESK - System Availability,Active Directory Maintenance,IT,IT,Within Function,IT → IT
+SERVICE DESK - Ticket Management & Escalation,Field Operation Tracking,IT,IT,Within Function,IT → IT
+ITAM - Software Asset Management,ITAM - CMDB Management and Integration,IT,IT,Within Function,IT → IT
+M&A IT Integration Strategy,ITAM - Hardware Asset Management,IT,IT,Within Function,IT → IT
+Spend Forecasting & Optimization,Contract Negotiations,IT,IT,Within Function,IT → IT
+Vendor Performance and SLA Monitoring,Vendor Scorecards,IT,IT,Within Function,IT → IT
+Vendor Risk Management,Security Operations,IT,IT,Within Function,IT → IT
+Mobile Device Management - Footprint and Utilization,Cloud Cost Control Management,IT,IT,Within Function,IT → IT
+APP DEV - No/Low-Code Maintenance,App Dev - Rapid Prototyping,IT,IT,Within Function,IT → IT
+Enterprise Apps - Integration and Extensibility,Enterprise Apps - Migration and Consolidation,IT,IT,Within Function,IT → IT
+Cloud Data Preparation,Datacenter Optimization & Consolidation,IT,IT,Within Function,IT → IT
+Network / Server Performance Monitoring and Reporting,Predictive Maintenance,IT,IT,Within Function,IT → IT
+Server Management - Software Updates and Patching,Cloud Cost Control Management,IT,IT,Within Function,IT → IT
+Firewall IP Address Whitelist Management,User Access Controls,IT,IT,Within Function,IT → IT
+AI Ops - Intelligent Alerting,Fraud Detection,IT,IT,Within Function,IT → IT
+High Risk Region Hardware Tracking,PII Anonymization & Regulatory Compliance,IT,IT,Within Function,IT → IT
+IT Audit Application Control & Testing,IT Audit - Database Control & Testing,IT,IT,Within Function,IT → IT
+Log Parsing and Analysis,Security Operations,IT,IT,Within Function,IT → IT
+Vulnerability Management,Security Awareness,IT,IT,Within Function,IT → IT
+Security Policy Compliance Tracking,Security Operations,IT,IT,Within Function,IT → IT
+Persona Profiling,Predictive Targeting,Marketing,Marketing,Within Function,Marketing → Marketing
+Webinar / Podcast / Blog Topic Modeling,SEO - Key Word Clustering,Marketing,Marketing,Within Function,Marketing → Marketing
+Events Data Collection & Analysis,Lead Scoring,Marketing,Marketing,Within Function,Marketing → Marketing
+Gated Content Collection & Analysis,Lead Routing,Marketing,Marketing,Within Function,Marketing → Marketing
+Demographic / Psychographic,Predictive Targeting,Marketing,Marketing,Within Function,Marketing → Marketing
+Customer Insight,Insights - Churn Rate / Retention Scoring,Marketing,Marketing,Within Function,Marketing → Marketing
+"Recency, frequency, monetary value (RFM)",Lifecycle - Loyalty Program,Marketing,Marketing,Within Function,Marketing → Marketing
+Predictive Targeting,AB Testing,Marketing,Marketing,Within Function,Marketing → Marketing
+Attribution (MMM / MTA),ROI Modeling,Marketing,Marketing,Within Function,Marketing → Marketing
+Location-based Marketing,Social Media - Paid Social,Marketing,Marketing,Within Function,Marketing → Marketing
+SEM - Keyword Bidding Analysis,SEO - Key Word Clustering,Marketing,Marketing,Within Function,Marketing → Marketing
+SEO Metrics collection from Tools,Display Ads - Ad Spend Analysis,Marketing,Marketing,Within Function,Marketing → Marketing
+Social Media - Social Listening,Social Media - Engagement Analysis,Marketing,Marketing,Within Function,Marketing → Marketing
+Media and PR - Brand Impact: Social Sentiment,Media and PR - Media Coverage Collection & Analysis,Marketing,Marketing,Within Function,Marketing → Marketing
+Media and PR - Share of Voice: Collection & Analysis,Media and PR - Media Reach Collection & Analysis,Marketing,Marketing,Within Function,Marketing → Marketing
+"Integration - Customer 360 (Martech, CRM, ERP)",Insights - Customer Database Health,Marketing,Marketing,Within Function,Marketing → Marketing
+Marketing Automation - List Load Automation,Marketing Automation - Mapping UTM between MAP to CRM,Marketing,Marketing,Within Function,Marketing → Marketing
+Efficiency - Sales response time to qualified lead,Insights - Lead Conversion Analytics,Marketing,Marketing,Within Function,Marketing → Marketing
+Insights - Churn Rate / Retention Scoring,Insights - Customer Behavior (Transaction/Usage),Marketing,Marketing,Within Function,Marketing → Marketing
+Lifecycle - Customer Lifetime Value (CLTV),Lifecycle - Next Best Action (NBA),Marketing,Marketing,Within Function,Marketing → Marketing
+Lifecycle - Loyalty Program,Lifecycle - Engagement Scoring,Marketing,Marketing,Within Function,Marketing → Marketing
+Lifecycle - Market Basket,Lifecycle - Recommendation Engine,Marketing,Marketing,Within Function,Marketing → Marketing
+Lifecycle - Net Promoter Score (NPS),Lifecycle - Survey Analysis,Marketing,Marketing,Within Function,Marketing → Marketing
+Workforce Forecasting,Headcount Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Internal & External Benchmarking,Employee Retention Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Employee Turnover / Attrition / Churn / Flight Risk,Absence Rate Analytics,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Employee Engagement Analysis,Employee Satisfaction - Pulse Surveys and Net Promoter Score,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+"Pay Metrics & Transparency - Gender, Race, Ethnicity, Disability, Religion",Diversity & Inclusion Metrics,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Demographics Reporting & Forecasting,Bias Analytics,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Length of Service and Age Banding Metrics,Employee Retention Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Automated Training Reporting,Compliance Course Completion Rate Consolidation,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Training Hours / Completed Metrics,Learning Activities Completed Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Course Engagement Analysis,Training Cost Benefit Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Onboarding Automation,Employee Schedule Automation,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Offboarding Automation,Incident Metrics,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Productivity / Utilization,Flexibility Metrics,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Health & Wellbeing Assessment,Employee Expense Management,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Time Management & Payroll Automation,COVID-19 Management,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Span of Control & Layers,Org Structure Integrity Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Network Analysis,Automated Org Structure Reporting,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Key Performance Metrics,Promotion & Compensation Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Ethics & Compliance Analytics,Disciplinary Action Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Resume & CV Screening Automation,Recruitment Cycle Efficiency,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Internal vs External Hiring,Hiring Source Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Candidate Feedback,Hiring Cost Analysis,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Hiring Cost Analysis,Contract Analytics,Human Resources,Human Resources,Within Function,Human Resources → Human Resources
+Financial Statement Reconciliations,Procurement Analytics,Finance,Supply Chain,Between Functions,Finance → Supply Chain
+Tax Regulatory Compliance,Supplier Lifecycle Analytics,Finance,Supply Chain,Between Functions,Finance → Supply Chain
+Demand & Sales Forecasting,Capital Budgeting & Forecasting,Supply Chain,Finance,Between Functions,Supply Chain → Finance
+Budgeting - Marketing Spend Analysis,Capital Budgeting & Forecasting,Marketing,Finance,Between Functions,Marketing → Finance
+Customer Insight,Strategic Sales Analysis & Forecasting,Marketing,Finance,Between Functions,Marketing → Finance
+Time Management & Payroll Automation,Expense & Department Allocations,Human Resources,Finance,Between Functions,Human Resources → Finance
+Workforce Forecasting,Production Planning & Scheduling,Human Resources,Supply Chain,Between Functions,Human Resources → Supply Chain
+Cloud Cost Control Management,Capital Budgeting & Forecasting,IT,Finance,Between Functions,IT → Finance
+PII Anonymization & Regulatory Compliance,Tax Regulatory Compliance,IT,Finance,Between Functions,IT → Finance
+Employee Engagement Analysis,Lifecycle - Net Promoter Score (NPS),Human Resources,Marketing,Between Functions,Human Resources → Marketing
+Project and Program Management / PMO,Project & Program Management / PMO,IT,Finance,Between Functions,IT → Finance
+Enterprise Apps - Integration and Extensibility,Finance Systems Connectivity & Interoperability,IT,Finance,Between Functions,IT → Finance
+"Integration - Customer 360 (Martech, CRM, ERP)",Demand & Sales Forecasting,Marketing,Supply Chain,Between Functions,Marketing → Supply Chain
+Insights - Lead Conversion Analytics,Demand & Sales Forecasting,Marketing,Supply Chain,Between Functions,Marketing → Supply Chain
+Sales & Operations Planning,Capital Budgeting & Forecasting,Supply Chain,Finance,Between Functions,Supply Chain → Finance
+Inventory Turnover,Working Capital Management,Supply Chain,Finance,Between Functions,Supply Chain → Finance
+Order Management & Outbound Logistics,Lifecycle - Customer Satisfaction,Supply Chain,Marketing,Between Functions,Supply Chain → Marketing
+Vendor Risk Management,Supplier Lifecycle Analytics,IT,Supply Chain,Between Functions,IT → Supply Chain
+User Access Controls,SoX Compliance,IT,Finance,Between Functions,IT → Finance
+Security Operations,IT & Operational Audit,IT,Finance,Between Functions,IT → Finance
+Employee Turnover / Attrition / Churn / Flight Risk,SERVICE DESK - Resource Capacity Planning,Human Resources,IT,Between Functions,Human Resources → IT
+Onboarding Automation,Account Provisioning and Maintenance,Human Resources,IT,Between Functions,Human Resources → IT
+Offboarding Automation,User Access Controls,Human Resources,IT,Between Functions,Human Resources → IT
+Training Hours / Completed Metrics,Security Awareness,Human Resources,IT,Between Functions,Human Resources → IT
+Marketing Automation - Mapping UTM between MAP to CRM,Enterprise Apps - Integration and Extensibility,Marketing,IT,Between Functions,Marketing → IT
+Marketing Audit - Data Quality Assurance,Cloud Data Preparation,Marketing,IT,Between Functions,Marketing → IT
+Price Point Analysis & Optimization,Pricing Strategy & Analysis,Supply Chain,Finance,Between Functions,Supply Chain → Finance
+Customer Satisfaction,Lifecycle - Net Promoter Score (NPS),Supply Chain,Marketing,Between Functions,Supply Chain → Marketing
+Customer Analysis & Segmentation,Customer Insight,Supply Chain,Marketing,Between Functions,Supply Chain → Marketing
+Employee Commute & Real Estate Analytics,Real Estate Planning,Human Resources,Finance,Between Functions,Human Resources → Finance

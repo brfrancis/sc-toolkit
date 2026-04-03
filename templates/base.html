@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}sc-toolkit{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav-brand" href="/">sc-toolkit</a>
+    <ul class="nav-links">
+      <li><a href="/demo" {% if active == 'demo' %}class="active"{% endif %}>Demo landing page</a></li>
+      <li><a href="/cdr"  {% if active == 'cdr'  %}class="active"{% endif %}>CDR warehouse</a></li>
+      <li><a href="/uci"  {% if active == 'uci'  %}class="active"{% endif %}>Use case intelligence</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="/static/js/main.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
