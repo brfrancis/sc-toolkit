@@ -3,59 +3,57 @@
 
 {% block head %}
 <style>
-.uci-layout { display: grid; grid-template-columns: 1fr 320px; gap: 0; height: calc(100vh - 52px); overflow: hidden; }
+html, body { height: 100%; overflow: hidden; }
+.uci-layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100vh - 52px); overflow: hidden; }
 .graph-pane { position: relative; background: var(--bg-surface); border-right: 1px solid var(--border); overflow: hidden; }
-.side-pane { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+.side-pane { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 
 .graph-controls { position: absolute; top: 12px; left: 12px; z-index: 10; display: flex; flex-direction: column; gap: 8px; }
 .graph-controls select,
 .graph-controls input[type="text"] {
   padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
-  border-radius: var(--radius); background: var(--bg); color: var(--text);
-  width: 200px;
+  border-radius: var(--radius); background: var(--bg); color: var(--text); width: 200px;
 }
-.graph-controls .ctrl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
-
+.ctrl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
 .graph-info { position: absolute; bottom: 12px; left: 12px; font-size: 11px; color: var(--text-muted); }
-
-#uci-graph { width: 100%; height: 100%; }
+#uci-graph { width: 100%; height: 100%; display: block; }
 
 .node-detail { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--bg); }
-.node-detail h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
-.node-detail .nd-empty { font-size: 13px; color: var(--text-muted); }
-.nd-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
-.nd-meta span { display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-surface); margin-right: 4px; margin-bottom: 4px; }
+.node-detail h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.nd-empty { font-size: 13px; color: var(--text-muted); }
+.nd-meta { margin-bottom: 10px; }
+.nd-meta span { display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-surface); font-size: 11px; color: var(--text-muted); margin-right: 4px; margin-bottom: 4px; }
 .nd-rels h4 { font-size: 12px; font-weight: 500; color: var(--text-muted); margin: 10px 0 4px; }
-.nd-rel-item { font-size: 12px; color: var(--text); padding: 3px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+.nd-rel-item { font-size: 12px; padding: 3px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
 .nd-rel-item:last-child { border-bottom: none; }
 .nd-arrow { color: var(--text-muted); }
-.nd-scope { font-size: 10px; color: var(--text-muted); }
+.nd-scope { font-size: 10px; color: var(--text-muted); margin-left: auto; }
 
-.legend { display: flex; flex-direction: column; gap: 6px; }
-.legend-title { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
-.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); }
+.legend-title { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); margin-bottom: 4px; }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.stat-row { display: flex; gap: 12px; }
+.stat { flex: 1; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
+.stat-val { font-size: 20px; font-weight: 600; }
+.stat-lbl { font-size: 11px; color: var(--text-muted); }
 
 .classify-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 .classify-section .form-group { margin-bottom: 12px; }
 .classify-section label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; }
 .classify-section input,
-.classify-section textarea,
-.classify-section select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 13px; font-family: var(--font); }
+.classify-section textarea {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--bg); color: var(--text);
+  font-size: 13px; font-family: var(--font);
+}
 .classify-section textarea { resize: vertical; min-height: 70px; }
-.stat-row { display: flex; gap: 16px; }
-.stat { flex: 1; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
-.stat-val { font-size: 20px; font-weight: 600; }
-.stat-label { font-size: 11px; color: var(--text-muted); }
 </style>
 {% endblock %}
-
-{% block content %}{% endblock %}
 
 {% block body_override %}
 <div class="uci-layout">
 
-  <!-- Left: graph canvas -->
   <div class="graph-pane">
     <div class="graph-controls">
       <div>
@@ -73,47 +71,39 @@
       </div>
     </div>
     <svg id="uci-graph"></svg>
-    <div class="graph-info" id="graph-info">{{ graph_json | tojson | length }} chars loaded — drag to pan · scroll to zoom · click a node</div>
+    <div class="graph-info" id="graph-info">Loading...</div>
   </div>
 
-  <!-- Right: side panel -->
   <div class="side-pane">
 
     <div class="stat-row">
-      <div class="stat">
-        <div class="stat-val" id="stat-nodes">348</div>
-        <div class="stat-label">Use cases</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="stat-edges">164</div>
-        <div class="stat-label">Relationships</div>
-      </div>
+      <div class="stat"><div class="stat-val">348</div><div class="stat-lbl">Use cases</div></div>
+      <div class="stat"><div class="stat-val">164</div><div class="stat-lbl">Relationships</div></div>
     </div>
 
-    <div class="legend">
+    <div>
       <div class="legend-title">Functions</div>
       <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Finance</div>
       <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Supply Chain</div>
       <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>IT</div>
       <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div>Marketing</div>
       <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Human Resources</div>
-      <div class="legend-item" style="margin-top:6px"><div class="legend-dot" style="background:#94a3b8;opacity:0.4"></div>Filtered out</div>
     </div>
 
     <div class="node-detail" id="node-detail">
-      <div class="nd-empty">Click a node to see details and relationships.</div>
+      <div class="nd-empty">Click a node to inspect it.</div>
     </div>
 
     <div class="classify-section">
       <h3>Classify a use case</h3>
       <form action="/uci/classify" method="POST">
         <div class="form-group">
-          <label for="use_case_name">Use case name</label>
-          <input type="text" id="use_case_name" name="use_case_name" placeholder="e.g. Monthly VAT Return">
+          <label>Use case name</label>
+          <input type="text" name="use_case_name" placeholder="e.g. Monthly VAT Return">
         </div>
         <div class="form-group">
-          <label for="description">Workflow description</label>
-          <textarea id="description" name="description" placeholder="Describe what the customer does manually..."></textarea>
+          <label>Workflow description</label>
+          <textarea name="description" placeholder="Describe what the customer does manually..."></textarea>
         </div>
         <div class="form-group">
           <label>Already implemented</label>
@@ -131,7 +121,9 @@
 
   </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>const GRAPH_DATA = {{ graph_json | safe }};</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="/static/js/tag-input.js"></script>
