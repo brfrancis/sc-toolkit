@@ -4,9 +4,123 @@
 {% block head %}
 <style>
 html, body { height: 100%; overflow: hidden; }
-.uci-layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100vh - 52px); overflow: hidden; }
-.uci-layout.side-collapsed { grid-template-columns: 1fr 42px; }
-.graph-pane { position: relative; background: var(--bg-surface); border-right: 1px solid var(--border); overflow: hidden; }
+.uci-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; height: calc(100vh - 52px); overflow: hidden; }
+.uci-layout.side-collapsed { grid-template-columns: minmax(0, 1fr) 42px; }
+.graph-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.zone {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  min-height: 84px;
+}
+.zone summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.zone summary::-webkit-details-marker { display: none; }
+.zone-body {
+  border-top: 1px solid var(--border);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.logo-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+}
+.logo-search-input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text);
+}
+.logo-search-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.logo-candidates {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.logo-candidate {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  font-size: 11px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.logo-dropzone {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  min-height: 52px;
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  background: rgba(148, 163, 184, 0.06);
+}
+.logo-dropzone.drag-active {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.12);
+}
+.logo-chip {
+  width: 46px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.logo-chip img { max-width: 90%; max-height: 90%; object-fit: contain; }
+.logo-hint { font-size: 11px; color: var(--text-muted); }
+
+.network-zone {
+  flex: 1;
+  min-height: 260px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.06) 0%, rgba(148, 163, 184, 0.04) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.network-zone-title {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  z-index: 5;
+  pointer-events: none;
+}
+.graph-info { position: absolute; bottom: 12px; left: 12px; font-size: 11px; color: var(--text-muted); z-index: 5; }
+#uci-graph { width: 100%; height: 100%; display: block; }
+
 .side-pane { position: relative; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 .side-pane-content { display: flex; flex-direction: column; gap: 20px; }
 .uci-layout.side-collapsed .side-pane { overflow: hidden; padding: 24px 8px; }
@@ -26,10 +140,7 @@ html, body { height: 100%; overflow: hidden; }
 }
 .uci-layout.side-collapsed .side-toggle { left: 6px; }
 
-.pane-controls input[type="text"] {
-  padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
-  border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%;
-}
+.pane-controls input[type="text"],
 .pane-controls select {
   padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
   border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%;
@@ -57,8 +168,6 @@ html, body { height: 100%; overflow: hidden; }
 .filter-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
 .filter-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(15, 23, 42, 0.2); }
 .ctrl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
-.graph-info { position: absolute; bottom: 12px; left: 12px; font-size: 11px; color: var(--text-muted); }
-#uci-graph { width: 100%; height: 100%; display: block; }
 
 .node-detail { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--bg); }
 .node-detail h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
@@ -86,6 +195,12 @@ html, body { height: 100%; overflow: hidden; }
   font-size: 13px; font-family: var(--font);
 }
 .classify-section textarea { resize: vertical; min-height: 70px; }
+
+@media (max-width: 1024px) {
+  .uci-layout { grid-template-columns: 1fr; }
+  .side-pane { border-top: 1px solid var(--border); }
+  .side-toggle { display: none; }
+}
 </style>
 {% endblock %}
 
@@ -93,8 +208,39 @@ html, body { height: 100%; overflow: hidden; }
 <div class="uci-layout">
 
   <div class="graph-pane">
-    <svg id="uci-graph"></svg>
-    <div class="graph-info" id="graph-info">Loading...</div>
+    <details class="zone" open>
+      <summary>Partners / Ecosystem <span>▲</span></summary>
+      <div class="zone-body">
+        <div class="logo-controls">
+          <input type="text" class="logo-search-input" placeholder="Search partner logo (e.g. Snowflake)" data-role="search-input" data-zone="partners">
+          <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="partners">Search</button>
+        </div>
+        <div class="logo-candidates" data-role="candidates" data-zone="partners"></div>
+        <div class="logo-dropzone" data-role="dropzone" data-zone="partners">
+          <span class="logo-hint">Drop an image here or choose a search result.</span>
+        </div>
+      </div>
+    </details>
+
+    <div class="network-zone">
+      <div class="network-zone-title">Use Case Network</div>
+      <svg id="uci-graph"></svg>
+      <div class="graph-info" id="graph-info">Loading...</div>
+    </div>
+
+    <details class="zone" open>
+      <summary>Data Sources / Systems <span>▲</span></summary>
+      <div class="zone-body">
+        <div class="logo-controls">
+          <input type="text" class="logo-search-input" placeholder="Search source logo (e.g. Salesforce)" data-role="search-input" data-zone="sources">
+          <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="sources">Search</button>
+        </div>
+        <div class="logo-candidates" data-role="candidates" data-zone="sources"></div>
+        <div class="logo-dropzone" data-role="dropzone" data-zone="sources">
+          <span class="logo-hint">Drop an image here or choose a search result.</span>
+        </div>
+      </div>
+    </details>
   </div>
 
   <div class="side-pane" id="side-pane">
@@ -173,4 +319,114 @@ html, body { height: 100%; overflow: hidden; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="/static/js/tag-input.js"></script>
 <script src="/static/js/network-graph.js"></script>
+<script>
+(function () {
+  const state = { partners: [], sources: [] };
+
+  function renderLogos(zone) {
+    const dropzone = document.querySelector(`[data-role="dropzone"][data-zone="${zone}"]`);
+    if (!dropzone) return;
+    dropzone.innerHTML = '';
+
+    if (!state[zone].length) {
+      const hint = document.createElement('span');
+      hint.className = 'logo-hint';
+      hint.textContent = 'Drop an image here or choose a search result.';
+      dropzone.appendChild(hint);
+      return;
+    }
+
+    state[zone].forEach((logoUrl) => {
+      const chip = document.createElement('div');
+      chip.className = 'logo-chip';
+      const img = document.createElement('img');
+      img.src = logoUrl;
+      img.alt = `${zone} logo`;
+      chip.appendChild(img);
+      dropzone.appendChild(chip);
+    });
+  }
+
+  function addLogo(zone, src) {
+    if (!src) return;
+    state[zone].push(src);
+    renderLogos(zone);
+  }
+
+  async function searchLogos(zone) {
+    const input = document.querySelector(`[data-role="search-input"][data-zone="${zone}"]`);
+    const resultsEl = document.querySelector(`[data-role="candidates"][data-zone="${zone}"]`);
+    const query = (input?.value || '').trim();
+    if (!query || !resultsEl) return;
+
+    resultsEl.innerHTML = '<span class="logo-hint">Searching…</span>';
+
+    try {
+      const response = await fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?query=${encodeURIComponent(query)}`);
+      const candidates = await response.json();
+      resultsEl.innerHTML = '';
+
+      (candidates || []).slice(0, 3).forEach((candidate) => {
+        if (!candidate.logo) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'logo-candidate';
+        button.textContent = `+ ${candidate.name}`;
+        button.addEventListener('click', () => addLogo(zone, candidate.logo));
+        resultsEl.appendChild(button);
+      });
+
+      if (!resultsEl.children.length) {
+        resultsEl.innerHTML = '<span class="logo-hint">No candidates found.</span>';
+      }
+    } catch (err) {
+      resultsEl.innerHTML = '<span class="logo-hint">Search unavailable.</span>';
+      console.error('Logo search failed', err);
+    }
+  }
+
+  function setupDropzone(zone) {
+    const dropzone = document.querySelector(`[data-role="dropzone"][data-zone="${zone}"]`);
+    if (!dropzone) return;
+
+    dropzone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropzone.classList.add('drag-active');
+    });
+
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-active'));
+
+    dropzone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropzone.classList.remove('drag-active');
+      const files = Array.from(event.dataTransfer?.files || []);
+      const images = files.filter((file) => file.type.startsWith('image/')).slice(0, 3);
+
+      images.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (loadEvent) => addLogo(zone, loadEvent.target?.result);
+        reader.readAsDataURL(file);
+      });
+    });
+  }
+
+  document.querySelectorAll('[data-role="search-btn"]').forEach((button) => {
+    button.addEventListener('click', () => searchLogos(button.dataset.zone));
+  });
+
+  document.querySelectorAll('[data-role="search-input"]').forEach((input) => {
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        searchLogos(input.dataset.zone);
+      }
+    });
+  });
+
+  setupDropzone('partners');
+  setupDropzone('sources');
+  renderLogos('partners');
+  renderLogos('sources');
+})();
+</script>
 {% endblock %}
