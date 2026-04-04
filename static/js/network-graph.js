@@ -49,14 +49,50 @@ window.addEventListener('load', function () {
   allNodes.forEach(n => nodeById[n.id] = n);
   const functionKeys = [...new Set(allNodes.map(n => n.function).filter(Boolean))].sort((a, b) => a.localeCompare(b));
   const functionColors = {};
-  const basePalette = [...d3.schemeTableau10, ...d3.schemeSet3];
+  const reservedStatusColours = new Set([
+    '#16a34a', '#166534',
+    '#f59e0b', '#92400e',
+    '#dc2626', '#991b1b',
+  ]);
+
+  function isReservedStatusColor(colour) {
+    const rgb = d3.color(colour);
+    if (!rgb) return false;
+    const hex = rgb.formatHex().toLowerCase();
+    if (reservedStatusColours.has(hex)) return true;
+
+    const hsl = d3.hsl(rgb);
+    if (Number.isNaN(hsl.h)) return false;
+    const hue = (hsl.h + 360) % 360;
+
+    const inRedBand = hue <= 20 || hue >= 340;
+    const inAmberBand = hue >= 25 && hue <= 55;
+    const inGreenBand = hue >= 90 && hue <= 160;
+    return inRedBand || inAmberBand || inGreenBand;
+  }
+
+  const basePalette = [...d3.schemeTableau10, ...d3.schemeSet3]
+    .map(colour => d3.color(colour)?.formatHex()?.toLowerCase() || colour)
+    .filter(colour => !isReservedStatusColor(colour));
+
+  function generateFunctionColour(index) {
+    let hue = (210 + (index * 41)) % 360;
+    let attempts = 0;
+    while (attempts < 36) {
+      const colour = d3.hsl(hue, 0.6, 0.5).formatHex();
+      if (!isReservedStatusColor(colour)) return colour;
+      hue = (hue + 17) % 360;
+      attempts += 1;
+    }
+    return '#6366f1';
+  }
+
   functionKeys.forEach((fn, index) => {
     if (index < basePalette.length) {
       functionColors[fn] = basePalette[index];
       return;
     }
-    const angle = (index * 137.508) % 360;
-    functionColors[fn] = d3.hsl(angle, 0.62, 0.52).formatHex();
+    functionColors[fn] = generateFunctionColour(index);
   });
   const visibleFunctions = new Set(functionKeys);
   const implementedIds = new Set();
