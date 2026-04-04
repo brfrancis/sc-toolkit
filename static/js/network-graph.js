@@ -53,6 +53,7 @@ window.addEventListener('load', function () {
   const functionKeys = [...new Set(allNodes.map(n => n.function))];
   const visibleFunctions = new Set(functionKeys);
   const implementedIds = new Set();
+  const vetoIds = new Set();
   const implementedConnections = new Set();
   let selectedNode = null;
 
@@ -70,6 +71,7 @@ window.addEventListener('load', function () {
   }
 
   function nodeStroke(d) {
+    if (vetoIds.has(d.id)) return '#dc2626';
     if (selectedNode === d) return '#1a1a1a';
     if (implementedIds.has(d.id)) return '#16a34a';
     if (implementedConnections.has(d.id)) return '#f59e0b';
@@ -77,6 +79,7 @@ window.addEventListener('load', function () {
   }
 
   function nodeStrokeWidth(d) {
+    if (vetoIds.has(d.id)) return 2.4;
     if (selectedNode === d) return 2.5;
     if (implementedIds.has(d.id)) return 2.2;
     if (implementedConnections.has(d.id)) return 1.8;
@@ -174,28 +177,28 @@ window.addEventListener('load', function () {
   });
 
   function refresh() {
-    node.attr('fill', nodeColor).attr('fill-opacity', nodeOpacity);
+    node
+      .attr('fill', nodeColor)
+      .attr('fill-opacity', nodeOpacity)
+      .attr('display', d => visibleFunctions.has(d.function) ? null : 'none');
     node.attr('stroke', nodeStroke).attr('stroke-width', nodeStrokeWidth);
     link.attr('stroke-opacity', edgeOpacity);
     label.attr('opacity', d => {
+      if (!visibleFunctions.has(d.function)) return 0;
       if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 0.95 : 0.08;
-      if (activeFilter && d.function !== activeFilter) return 0.18;
       return 0.6;
-    });
+    }).attr('display', d => visibleFunctions.has(d.function) ? null : 'none');
   }
 
   function selectNode(d) {
-    node
-      .attr('stroke', n => n === d ? '#1a1a1a' : '#fff')
-      .attr('stroke-width', n => n === d ? 2 : 1);
-    label
-      .attr('font-weight', n => n === d ? 600 : 400)
-      .attr('opacity', n => n === d ? 1 : null);
+    selectedNode = d;
+    label.attr('font-weight', n => n === d ? 600 : 400);
+    refresh();
     renderDetail(d);
   }
 
   function deselectNode() {
-    node.attr('stroke', '#fff').attr('stroke-width', 1);
+    selectedNode = null;
     label.attr('font-weight', 400);
     refresh();
     detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
@@ -222,6 +225,19 @@ window.addEventListener('load', function () {
       const tgt = e.target.id || e.target;
       if (implementedIds.has(src) && !implementedIds.has(tgt)) implementedConnections.add(tgt);
       if (implementedIds.has(tgt) && !implementedIds.has(src)) implementedConnections.add(src);
+    });
+
+    refresh();
+  }
+
+  function updateVetoHighlights(rawVeto) {
+    vetoIds.clear();
+    const byNormalisedId = {};
+    allNodes.forEach(n => { byNormalisedId[normaliseId(n.id)] = n.id; });
+
+    rawVeto.forEach(name => {
+      const exact = byNormalisedId[normaliseId(name)];
+      if (exact) vetoIds.add(exact);
     });
 
     refresh();
@@ -302,6 +318,13 @@ window.addEventListener('load', function () {
     sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.1).restart();
   });
 
+  document.addEventListener('tag-input-change', e => {
+    if (!e.detail || !e.detail.listId) return;
+    if (e.detail.listId === 'implemented-list') updateImplementedHighlights(e.detail.tags || []);
+    if (e.detail.listId === 'veto-list') updateVetoHighlights(e.detail.tags || []);
+  });
+
+  renderFunctionFilters();
   refresh();
   info.textContent = `${allNodes.length} use cases · ${allEdges.length} relationships · drag to pan · scroll to zoom · click a node`;
 });
