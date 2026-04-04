@@ -1,13 +1,5 @@
 window.addEventListener('load', function () {
 
-  const COLORS = {
-    'Finance':         '#3b82f6',
-    'Supply Chain':    '#10b981',
-    'IT':              '#f59e0b',
-    'Marketing':       '#ec4899',
-    'Human Resources': '#8b5cf6',
-  };
-
   const svgEl  = document.getElementById('uci-graph');
   const detail = document.getElementById('node-detail');
   const info   = document.getElementById('graph-info');
@@ -55,7 +47,17 @@ window.addEventListener('load', function () {
   const allEdges = GRAPH_DATA.edges.map(d => ({ ...d }));
   const nodeById = {};
   allNodes.forEach(n => nodeById[n.id] = n);
-  const functionKeys = [...new Set(allNodes.map(n => n.function))];
+  const functionKeys = [...new Set(allNodes.map(n => n.function).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const functionColors = {};
+  const basePalette = [...d3.schemeTableau10, ...d3.schemeSet3];
+  functionKeys.forEach((fn, index) => {
+    if (index < basePalette.length) {
+      functionColors[fn] = basePalette[index];
+      return;
+    }
+    const angle = (index * 137.508) % 360;
+    functionColors[fn] = d3.hsl(angle, 0.62, 0.52).formatHex();
+  });
   const visibleFunctions = new Set(functionKeys);
   const implementedIds = new Set();
   const vetoIds = new Set();
@@ -79,7 +81,7 @@ window.addEventListener('load', function () {
 
   function nodeColor(d) {
     if (!visibleFunctions.has(d.function)) return '#94a3b8';
-    return COLORS[d.function] || '#94a3b8';
+    return functionColors[d.function] || '#94a3b8';
   }
 
   function nodeOpacity(d) {
@@ -302,7 +304,11 @@ window.addEventListener('load', function () {
 
       const text = document.createElement('span');
       text.textContent = fn;
+      const swatch = document.createElement('span');
+      swatch.className = 'filter-color-dot';
+      swatch.style.backgroundColor = functionColors[fn] || '#94a3b8';
       labelEl.appendChild(checkbox);
+      labelEl.appendChild(swatch);
       labelEl.appendChild(text);
       fnFilterList.appendChild(labelEl);
     });
@@ -335,6 +341,14 @@ window.addEventListener('load', function () {
       const text = document.createElement('span');
       text.textContent = option.label;
       labelEl.appendChild(checkbox);
+      if (option.key !== 'none') {
+        const swatch = document.createElement('span');
+        swatch.className = 'filter-color-dot';
+        if (option.key === 'implemented') swatch.style.backgroundColor = '#16a34a';
+        if (option.key === 'adjacent') swatch.style.backgroundColor = '#f59e0b';
+        if (option.key === 'vetoed') swatch.style.backgroundColor = '#dc2626';
+        labelEl.appendChild(swatch);
+      }
       labelEl.appendChild(text);
       statusFilterList.appendChild(labelEl);
     });
