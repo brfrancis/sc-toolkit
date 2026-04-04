@@ -9,6 +9,8 @@ window.addEventListener('load', function () {
   const datasetSelect = document.getElementById('dataset-select');
   const layout = document.querySelector('.uci-layout');
   const sideToggle = document.getElementById('side-toggle');
+  const detailPane = document.getElementById('node-inspector-pane');
+  const detailToggle = document.getElementById('detail-toggle');
 
   if (!svgEl || typeof GRAPH_DATA === 'undefined' || typeof d3 === 'undefined') {
     if (info) info.textContent = 'Graph failed to initialise — check console.';
@@ -268,8 +270,19 @@ window.addEventListener('load', function () {
     }).attr('display', d => (visibleFunctions.has(d.function) && statusVisible(d)) ? null : 'none');
   }
 
+  function setDetailOpen(isOpen) {
+    if (!layout || !detailPane) return;
+    layout.classList.toggle('detail-open', isOpen);
+    detailPane.classList.toggle('open', isOpen);
+    if (detailToggle) {
+      detailToggle.textContent = isOpen ? '⟩' : '⟨';
+      detailToggle.setAttribute('aria-expanded', String(isOpen));
+    }
+  }
+
   function selectNode(d) {
     selectedNode = d;
+    setDetailOpen(true);
     label.attr('font-weight', n => n === d ? 600 : 400);
     refresh();
     renderDetail(d);
@@ -279,6 +292,7 @@ window.addEventListener('load', function () {
     selectedNode = null;
     label.attr('font-weight', 400);
     refresh();
+    setDetailOpen(false);
     detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
   }
 
@@ -406,11 +420,17 @@ window.addEventListener('load', function () {
       return `<div class="nd-rel-item"><span class="nd-arrow">←</span>${s2}<span class="nd-scope">${sc}</span></div>`;
     }).join('');
 
+    const safeDescription = (d.description || '').trim() || '--';
+
     detail.innerHTML = `
       <h3>${d.id}</h3>
       <div class="nd-meta">
         <span>${d.function}</span>
         <span>${d.department}</span>
+      </div>
+      <div class="nd-rels">
+        <h4>Description</h4>
+        <div class="nd-scope" style="font-size:12px;line-height:1.45;color:var(--text);margin-left:0;">${safeDescription}</div>
       </div>
       ${out.length ? `<div class="nd-rels"><h4>Leads to (${out.length})</h4>${outHtml}${out.length > 8 ? `<div class="nd-scope" style="padding-top:4px">+${out.length - 8} more</div>` : ''}</div>` : ''}
       ${into.length ? `<div class="nd-rels"><h4>Comes from (${into.length})</h4>${inHtml}${into.length > 8 ? `<div class="nd-scope" style="padding-top:4px">+${into.length - 8} more</div>` : ''}</div>` : ''}
@@ -439,6 +459,20 @@ window.addEventListener('load', function () {
       if (selectedDataset) url.searchParams.set('dataset', selectedDataset);
       if (typeof SELECTED_DATASET !== 'undefined' && selectedDataset === SELECTED_DATASET) return;
       window.location.assign(url.toString());
+    });
+  }
+
+  if (detailToggle && layout) {
+    detailToggle.addEventListener('click', () => {
+      const open = !layout.classList.contains('detail-open');
+      setDetailOpen(open);
+      setTimeout(() => {
+        width  = svgEl.parentElement.clientWidth  || 800;
+        height = svgEl.parentElement.clientHeight || 600;
+        svg.attr('width', width).attr('height', height);
+        functionCenters = computeFunctionCenters();
+        sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.18).restart();
+      }, 180);
     });
   }
 

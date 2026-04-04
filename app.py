@@ -170,7 +170,13 @@ def uci_index():
             if node_id in seen_node_ids:
                 continue
             seen_node_ids.add(node_id)
-            nodes.append({'id': node_id, 'function': row['Function'], 'department': row['Department']})
+            description = (row.get('Description') or '').strip()
+            nodes.append({
+                'id': node_id,
+                'function': row['Function'],
+                'department': row['Department'],
+                'description': description if description else '--',
+            })
             functions.add(row['Function'])
     
     edges = []
