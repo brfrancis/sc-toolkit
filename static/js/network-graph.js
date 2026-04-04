@@ -178,21 +178,24 @@ window.addEventListener('load', function () {
     node.attr('stroke', nodeStroke).attr('stroke-width', nodeStrokeWidth);
     link.attr('stroke-opacity', edgeOpacity);
     label.attr('opacity', d => {
-      if (!visibleFunctions.has(d.function)) return 0;
       if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 0.95 : 0.08;
+      if (activeFilter && d.function !== activeFilter) return 0.18;
       return 0.6;
     });
   }
 
   function selectNode(d) {
-    selectedNode = d;
-    refresh();
-    label.attr('font-weight', n => n === d ? 600 : 400);
+    node
+      .attr('stroke', n => n === d ? '#1a1a1a' : '#fff')
+      .attr('stroke-width', n => n === d ? 2 : 1);
+    label
+      .attr('font-weight', n => n === d ? 600 : 400)
+      .attr('opacity', n => n === d ? 1 : null);
     renderDetail(d);
   }
 
   function deselectNode() {
-    selectedNode = null;
+    node.attr('stroke', '#fff').attr('stroke-width', 1);
     label.attr('font-weight', 400);
     refresh();
     detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
@@ -299,17 +302,6 @@ window.addEventListener('load', function () {
     sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.1).restart();
   });
 
-  document.addEventListener('tag-input-change', e => {
-    if (e.detail && e.detail.listId === 'implemented-list') {
-      updateImplementedHighlights(e.detail.tags || []);
-    }
-  });
-
-  renderFunctionFilters();
-  const implementedHidden = document.getElementById('implemented_hidden');
-  if (implementedHidden && implementedHidden.value) {
-    try { updateImplementedHighlights(JSON.parse(implementedHidden.value)); } catch (_) {}
-  }
   refresh();
   info.textContent = `${allNodes.length} use cases · ${allEdges.length} relationships · drag to pan · scroll to zoom · click a node`;
 });
