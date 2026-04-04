@@ -14,6 +14,7 @@ window.addEventListener('load', function () {
   const fnFilterList = document.getElementById('fn-filter-list');
   const statusFilterList = document.getElementById('status-filter-list');
   const searchInput = document.getElementById('uc-search');
+  const datasetSelect = document.getElementById('dataset-select');
   const layout = document.querySelector('.uci-layout');
   const sideToggle = document.getElementById('side-toggle');
 
@@ -380,6 +381,16 @@ window.addEventListener('load', function () {
       }
     }
   });
+
+  if (datasetSelect) {
+    datasetSelect.addEventListener('change', e => {
+      const selectedDataset = e.target.value;
+      const url = new URL(window.location.href);
+      if (selectedDataset) url.searchParams.set('dataset', selectedDataset);
+      if (typeof SELECTED_DATASET !== 'undefined' && selectedDataset === SELECTED_DATASET) return;
+      window.location.assign(url.toString());
+    });
+  }
 
   if (sideToggle && layout) {
     sideToggle.addEventListener('click', () => {

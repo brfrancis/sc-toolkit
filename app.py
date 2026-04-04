@@ -110,11 +110,61 @@ def cdr_process():
 def uci_index():
     import csv, json as _json, os
     data_dir = os.path.join(os.path.dirname(__file__), 'usecase_intelligence', 'data')
-    
+
+    use_case_suffix = '_use_cases.csv'
+    relationship_suffixes = ('_use_case_relationships.csv', '_relationships.csv')
+    dataset_sources = {}
+
+    for filename in os.listdir(data_dir):
+        if not filename.endswith('.csv'):
+            continue
+
+        full_path = os.path.join(data_dir, filename)
+
+        if filename.endswith(use_case_suffix):
+            prefix = filename[:-len(use_case_suffix)]
+            dataset_sources.setdefault(prefix, {})['use_cases_path'] = full_path
+            continue
+
+        for relationship_suffix in relationship_suffixes:
+            if filename.endswith(relationship_suffix):
+                prefix = filename[:-len(relationship_suffix)]
+                dataset_sources.setdefault(prefix, {})['relationships_path'] = full_path
+                break
+
+    dataset_options = []
+    for prefix, paths in dataset_sources.items():
+        if 'use_cases_path' not in paths or 'relationships_path' not in paths:
+            continue
+        dataset_options.append({
+            'prefix': prefix,
+            'label': prefix.replace('_', ' ').strip(),
+            'use_cases_path': paths['use_cases_path'],
+            'relationships_path': paths['relationships_path'],
+        })
+
+    dataset_options.sort(key=lambda d: d['label'].lower())
+    if not dataset_options:
+        return render_template(
+            'usecase-intelligence/index.html',
+            active='uci',
+            functions=[],
+            graph_json=_json.dumps({'nodes': [], 'edges': []}),
+            node_count=0,
+            edge_count=0,
+            dataset_options=[],
+            selected_dataset=None,
+        )
+
+    requested_dataset = (request.args.get('dataset') or '').strip()
+    selected_option = next((d for d in dataset_options if d['prefix'] == requested_dataset), None)
+    if not selected_option:
+        selected_option = next((d for d in dataset_options if d['prefix'] == 'Alteryx'), dataset_options[0])
+
     nodes = []
     seen_node_ids = set()
     functions = set()
-    with open(os.path.join(data_dir, 'use_cases.csv')) as f:
+    with open(selected_option['use_cases_path']) as f:
         for row in csv.DictReader(f):
             node_id = row['Use Case']
             if node_id in seen_node_ids:
@@ -124,7 +174,7 @@ def uci_index():
             functions.add(row['Function'])
     
     edges = []
-    with open(os.path.join(data_dir, 'relationships.csv')) as f:
+    with open(selected_option['relationships_path']) as f:
         for row in csv.DictReader(f):
             source = row['From Use Case']
             target = row['To Use Case']
@@ -142,6 +192,8 @@ def uci_index():
         graph_json=graph_json,
         node_count=len(nodes),
         edge_count=len(edges),
+        dataset_options=[{'prefix': d['prefix'], 'label': d['label']} for d in dataset_options],
+        selected_dataset=selected_option['prefix'],
     )
 
 
