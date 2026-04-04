@@ -30,6 +30,10 @@ html, body { height: 100%; overflow: hidden; }
   padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
   border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%;
 }
+.pane-controls select {
+  padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%;
+}
 .filter-panel {
   width: 100%;
   border: 1px solid var(--border);
@@ -101,6 +105,14 @@ html, body { height: 100%; overflow: hidden; }
     <div class="side-pane-content" id="side-pane-content">
       <div class="pane-controls">
         <div>
+          <div class="ctrl-label">Use case set</div>
+          <select id="dataset-select">
+            {% for dataset in dataset_options %}
+            <option value="{{ dataset.prefix }}" {% if dataset.prefix == selected_dataset %}selected{% endif %}>{{ dataset.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
           <div class="ctrl-label">Filter by function</div>
           <details class="filter-panel" open>
             <summary>Show/hide functions</summary>
@@ -169,6 +181,7 @@ html, body { height: 100%; overflow: hidden; }
 
 {% block scripts %}
 <script>const GRAPH_DATA = {{ graph_json | safe }};</script>
+<script>const SELECTED_DATASET = {{ selected_dataset | tojson }};</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="/static/js/tag-input.js"></script>
 <script src="/static/js/network-graph.js"></script>
