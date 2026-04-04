@@ -11,6 +11,7 @@ window.addEventListener('load', function () {
   const svgEl  = document.getElementById('uci-graph');
   const detail = document.getElementById('node-detail');
   const info   = document.getElementById('graph-info');
+  const fnFilterList = document.getElementById('fn-filter-list');
 
   if (!svgEl || typeof GRAPH_DATA === 'undefined' || typeof d3 === 'undefined') {
     if (info) info.textContent = 'Graph failed to initialise — check console.';
@@ -50,28 +51,43 @@ window.addEventListener('load', function () {
   const nodeById = {};
   allNodes.forEach(n => nodeById[n.id] = n);
   const functionKeys = [...new Set(allNodes.map(n => n.function))];
+  const visibleFunctions = new Set(functionKeys);
+  const implementedIds = new Set();
+  const implementedConnections = new Set();
+  let selectedNode = null;
 
-  let activeFilter = '';
   let searchTerm   = '';
 
   function nodeColor(d) {
-    if (activeFilter && d.function !== activeFilter) return '#94a3b8';
+    if (!visibleFunctions.has(d.function)) return '#94a3b8';
     return COLORS[d.function] || '#94a3b8';
   }
 
   function nodeOpacity(d) {
+    if (!visibleFunctions.has(d.function)) return 0;
     if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.12;
-    if (activeFilter && d.function !== activeFilter) return 0.15;
     return 0.85;
   }
 
+  function nodeStroke(d) {
+    if (selectedNode === d) return '#1a1a1a';
+    if (implementedIds.has(d.id)) return '#16a34a';
+    if (implementedConnections.has(d.id)) return '#f59e0b';
+    return '#fff';
+  }
+
+  function nodeStrokeWidth(d) {
+    if (selectedNode === d) return 2.5;
+    if (implementedIds.has(d.id)) return 2.2;
+    if (implementedConnections.has(d.id)) return 1.8;
+    return 1;
+  }
+
   function edgeOpacity(d) {
-    if (activeFilter) {
-      const src = nodeById[d.source.id || d.source];
-      const tgt = nodeById[d.target.id || d.target];
-      if (!src || !tgt) return 0;
-      if (src.function !== activeFilter && tgt.function !== activeFilter) return 0;
-    }
+    const src = nodeById[d.source.id || d.source];
+    const tgt = nodeById[d.target.id || d.target];
+    if (!src || !tgt) return 0;
+    if (!visibleFunctions.has(src.function) || !visibleFunctions.has(tgt.function)) return 0;
     return 0.2;
   }
 
@@ -124,8 +140,8 @@ window.addEventListener('load', function () {
     .attr('r', 5)
     .attr('fill', nodeColor)
     .attr('fill-opacity', nodeOpacity)
-    .attr('stroke', '#fff')
-    .attr('stroke-width', 1)
+    .attr('stroke', nodeStroke)
+    .attr('stroke-width', nodeStrokeWidth)
     .style('cursor', 'pointer')
     .on('click', (event, d) => { event.stopPropagation(); selectNode(d); })
     .call(
@@ -159,6 +175,7 @@ window.addEventListener('load', function () {
 
   function refresh() {
     node.attr('fill', nodeColor).attr('fill-opacity', nodeOpacity);
+    node.attr('stroke', nodeStroke).attr('stroke-width', nodeStrokeWidth);
     link.attr('stroke-opacity', edgeOpacity);
     label.attr('opacity', d => {
       if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 0.95 : 0.08;
@@ -182,6 +199,57 @@ window.addEventListener('load', function () {
     label.attr('font-weight', 400);
     refresh();
     detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
+  }
+
+  function normaliseId(value) {
+    return (value || '').trim().toLowerCase();
+  }
+
+  function updateImplementedHighlights(rawImplemented) {
+    implementedIds.clear();
+    implementedConnections.clear();
+
+    const byNormalisedId = {};
+    allNodes.forEach(n => { byNormalisedId[normaliseId(n.id)] = n.id; });
+
+    rawImplemented.forEach(name => {
+      const exact = byNormalisedId[normaliseId(name)];
+      if (exact) implementedIds.add(exact);
+    });
+
+    allEdges.forEach(e => {
+      const src = e.source.id || e.source;
+      const tgt = e.target.id || e.target;
+      if (implementedIds.has(src) && !implementedIds.has(tgt)) implementedConnections.add(tgt);
+      if (implementedIds.has(tgt) && !implementedIds.has(src)) implementedConnections.add(src);
+    });
+
+    refresh();
+  }
+
+  function renderFunctionFilters() {
+    if (!fnFilterList) return;
+    fnFilterList.innerHTML = '';
+    functionKeys.forEach(fn => {
+      const labelEl = document.createElement('label');
+      labelEl.className = 'filter-item';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = true;
+      checkbox.value = fn;
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) visibleFunctions.add(fn);
+        else visibleFunctions.delete(fn);
+        refresh();
+      });
+
+      const text = document.createElement('span');
+      text.textContent = fn;
+      labelEl.appendChild(checkbox);
+      labelEl.appendChild(text);
+      fnFilterList.appendChild(labelEl);
+    });
   }
 
   function renderDetail(d) {
@@ -211,11 +279,6 @@ window.addEventListener('load', function () {
       ${!out.length && !into.length ? '<div class="nd-scope" style="padding-top:8px">No relationships defined</div>' : ''}
     `;
   }
-
-  document.getElementById('fn-filter').addEventListener('change', e => {
-    activeFilter = e.target.value;
-    refresh();
-  });
 
   document.getElementById('uc-search').addEventListener('input', e => {
     searchTerm = e.target.value.trim();

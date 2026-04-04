@@ -32,6 +32,9 @@
       };
       list.appendChild(input);
       hidden.value = JSON.stringify(tags);
+      document.dispatchEvent(new CustomEvent('tag-input-change', {
+        detail: { listId, hiddenId, tags: [...tags] }
+      }));
     }
     render();
   }

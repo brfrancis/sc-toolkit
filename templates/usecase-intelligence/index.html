@@ -14,6 +14,27 @@ html, body { height: 100%; overflow: hidden; }
   padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
   border-radius: var(--radius); background: var(--bg); color: var(--text); width: 200px;
 }
+.filter-panel {
+  width: 220px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+.filter-panel summary {
+  cursor: pointer;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.filter-list {
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 0 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.filter-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
 .ctrl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
 .graph-info { position: absolute; bottom: 12px; left: 12px; font-size: 11px; color: var(--text-muted); }
 #uci-graph { width: 100%; height: 100%; display: block; }
@@ -58,12 +79,10 @@ html, body { height: 100%; overflow: hidden; }
     <div class="graph-controls">
       <div>
         <div class="ctrl-label">Filter by function</div>
-        <select id="fn-filter">
-          <option value="">All functions</option>
-          {% for f in functions %}
-          <option value="{{ f }}">{{ f }}</option>
-          {% endfor %}
-        </select>
+        <details class="filter-panel" open>
+          <summary>Show/hide functions</summary>
+          <div id="fn-filter-list" class="filter-list"></div>
+        </details>
       </div>
       <div>
         <div class="ctrl-label">Search use case</div>
