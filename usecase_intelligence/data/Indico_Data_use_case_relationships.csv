@@ -1,0 +1,16 @@
+From Use Case,To Use Case,From Function,To Function,Relationship Scope,Relationship Label
+New Business Submission Intake & Triage,Submission Prioritisation & Scoring,Underwriting,Underwriting,Within,Underwriting → Underwriting
+Submission Prioritisation & Scoring,Appetite Matching & Risk Qualification,Underwriting,Underwriting,Within,Underwriting → Underwriting
+Risk Data Extraction & Structuring,Quote Generation Support,Underwriting,Underwriting,Within,Underwriting → Underwriting
+FNOL Intake & Classification,Claims Triage & Severity Scoring,Claims,Claims,Within,Claims → Claims
+Claims Triage & Severity Scoring,Claims Coverage Validation,Claims,Claims,Within,Claims → Claims
+Claims Coverage Validation,Settlement Recommendation Support,Claims,Claims,Within,Claims → Claims
+Policy Issuance,Mid-Term Adjustment Processing,Policy Servicing,Policy Servicing,Within,Policy Servicing → Policy Servicing
+Mid-Term Adjustment Processing,Renewal Processing,Policy Servicing,Policy Servicing,Within,Policy Servicing → Policy Servicing
+Premium Calculation & Validation,Invoice Generation,Billing,Billing,Within,Billing → Billing
+Invoice Generation,Payment Matching & Reconciliation,Billing,Billing,Within,Billing → Billing
+Quote Generation Support,Policy Issuance,Underwriting,Policy Servicing,Between,Underwriting → Policy Servicing
+Policy Issuance,Premium Calculation & Validation,Policy Servicing,Billing,Between,Policy Servicing → Billing
+Claims Coverage Validation,Policy Data Validation,Claims,Policy Servicing,Between,Claims → Policy Servicing
+Settlement Recommendation Support,Payment Matching & Reconciliation,Claims,Billing,Between,Claims → Billing
+Submission Prioritisation & Scoring,FNOL Intake & Classification,Underwriting,Claims,Between,Underwriting → Claims

@@ -1,0 +1,32 @@
+Function,Department,Use Case
+Underwriting,Submission & Intake,New Business Submission Intake & Triage
+Underwriting,Submission & Intake,Renewal Submission Intake & Prioritisation
+Underwriting,Submission & Intake,Facultative Reinsurance Broker Submission Processing
+Underwriting,Submission & Intake,Delegated Authority Submission Handling
+Underwriting,Submission & Intake,CDR Creation at Source
+Underwriting,Triage & Decisioning,Submission Prioritisation & Scoring
+Underwriting,Triage & Decisioning,Appetite Matching & Risk Qualification
+Underwriting,Triage & Decisioning,STP Eligibility Decisioning
+Underwriting,Risk Assessment,Risk Data Extraction & Structuring
+Underwriting,Risk Assessment,Exposure Aggregation & Normalisation
+Underwriting,Pricing,Quote Generation Support
+Underwriting,Workflow,Underwriting Workbench Orchestration
+Claims,FNOL,FNOL Intake & Classification
+Claims,FNOL,Claims Triage & Severity Scoring
+Claims,Processing,Claims Coverage Validation
+Claims,Processing,Reserve Setting & Adjustment Support
+Claims,Investigation,Fraud Detection & Anomaly Identification
+Claims,Financial,Settlement Recommendation Support
+Claims,Workflow,Claims Lifecycle Monitoring
+Policy Servicing,Lifecycle,Policy Issuance
+Policy Servicing,Lifecycle,Mid-Term Adjustment Processing
+Policy Servicing,Lifecycle,Renewal Processing
+Policy Servicing,Customer,Broker / Customer Request Routing
+Policy Servicing,Data,Policy Data Validation
+Policy Servicing,Compliance,Policy Compliance Checks
+Billing,Billing Ops,Premium Calculation & Validation
+Billing,Billing Ops,Invoice Generation
+Billing,Payments,Payment Matching & Reconciliation
+Billing,Payments,Cash Allocation
+Billing,Credit,Credit Control & Collections
+Billing,Reporting,Financial Reporting Preparation
