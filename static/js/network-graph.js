@@ -12,6 +12,10 @@ window.addEventListener('load', function () {
   const detail = document.getElementById('node-detail');
   const info   = document.getElementById('graph-info');
   const fnFilterList = document.getElementById('fn-filter-list');
+  const statusFilterList = document.getElementById('status-filter-list');
+  const searchInput = document.getElementById('uc-search');
+  const layout = document.querySelector('.uci-layout');
+  const sideToggle = document.getElementById('side-toggle');
 
   if (!svgEl || typeof GRAPH_DATA === 'undefined' || typeof d3 === 'undefined') {
     if (info) info.textContent = 'Graph failed to initialise — check console.';
@@ -28,7 +32,7 @@ window.addEventListener('load', function () {
   defs.append('marker')
     .attr('id', 'edge-arrow')
     .attr('viewBox', '0 -5 10 10')
-    .attr('refX', 12)
+    .attr('refX', 9)
     .attr('refY', 0)
     .attr('markerWidth', 5)
     .attr('markerHeight', 5)
@@ -55,9 +59,22 @@ window.addEventListener('load', function () {
   const implementedIds = new Set();
   const vetoIds = new Set();
   const implementedConnections = new Set();
+  const visibleStatuses = new Set(['implemented', 'adjacent', 'vetoed', 'none']);
   let selectedNode = null;
 
   let searchTerm   = '';
+
+  function nodeStatus(d) {
+    if (vetoIds.has(d.id)) return 'vetoed';
+    if (implementedIds.has(d.id)) return 'implemented';
+    if (implementedConnections.has(d.id)) return 'adjacent';
+    return 'none';
+  }
+
+  function statusVisible(d) {
+    if (selectedNode === d) return true;
+    return visibleStatuses.has(nodeStatus(d));
+  }
 
   function nodeColor(d) {
     if (!visibleFunctions.has(d.function)) return '#94a3b8';
@@ -66,6 +83,7 @@ window.addEventListener('load', function () {
 
   function nodeOpacity(d) {
     if (!visibleFunctions.has(d.function)) return 0;
+    if (!statusVisible(d)) return 0;
     if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.12;
     return 0.85;
   }
@@ -91,6 +109,7 @@ window.addEventListener('load', function () {
     const tgt = nodeById[d.target.id || d.target];
     if (!src || !tgt) return 0;
     if (!visibleFunctions.has(src.function) || !visibleFunctions.has(tgt.function)) return 0;
+    if (!statusVisible(src) || !statusVisible(tgt)) return 0;
     return 0.2;
   }
 
@@ -166,12 +185,31 @@ window.addEventListener('load', function () {
     .attr('dy', '0.3em')
     .style('pointer-events', 'none');
 
+  function edgeLinePosition(d) {
+    const sx = d.source.x;
+    const sy = d.source.y;
+    const tx = d.target.x;
+    const ty = d.target.y;
+    const dx = tx - sx;
+    const dy = ty - sy;
+    const len = Math.hypot(dx, dy) || 1;
+    const nodeRadius = 5;
+    const arrowPadding = 8;
+    const shorten = nodeRadius + arrowPadding;
+    return {
+      x1: sx,
+      y1: sy,
+      x2: tx - (dx / len) * shorten,
+      y2: ty - (dy / len) * shorten,
+    };
+  }
+
   svg.on('click', () => deselectNode());
 
   sim.on('tick', () => {
     link
-      .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      .attr('x1', d => edgeLinePosition(d).x1).attr('y1', d => edgeLinePosition(d).y1)
+      .attr('x2', d => edgeLinePosition(d).x2).attr('y2', d => edgeLinePosition(d).y2);
     node.attr('cx', d => d.x).attr('cy', d => d.y);
     label.attr('x', d => d.x).attr('y', d => d.y);
   });
@@ -180,14 +218,15 @@ window.addEventListener('load', function () {
     node
       .attr('fill', nodeColor)
       .attr('fill-opacity', nodeOpacity)
-      .attr('display', d => visibleFunctions.has(d.function) ? null : 'none');
+      .attr('display', d => (visibleFunctions.has(d.function) && statusVisible(d)) ? null : 'none');
     node.attr('stroke', nodeStroke).attr('stroke-width', nodeStrokeWidth);
     link.attr('stroke-opacity', edgeOpacity);
     label.attr('opacity', d => {
       if (!visibleFunctions.has(d.function)) return 0;
+      if (!statusVisible(d)) return 0;
       if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 0.95 : 0.08;
       return 0.6;
-    }).attr('display', d => visibleFunctions.has(d.function) ? null : 'none');
+    }).attr('display', d => (visibleFunctions.has(d.function) && statusVisible(d)) ? null : 'none');
   }
 
   function selectNode(d) {
@@ -268,6 +307,38 @@ window.addEventListener('load', function () {
     });
   }
 
+  function renderStatusFilters() {
+    if (!statusFilterList) return;
+    const statusOptions = [
+      { key: 'implemented', label: 'Already implemented' },
+      { key: 'adjacent', label: 'Adjacent' },
+      { key: 'vetoed', label: 'Vetoed' },
+      { key: 'none', label: 'No status' },
+    ];
+
+    statusFilterList.innerHTML = '';
+    statusOptions.forEach(option => {
+      const labelEl = document.createElement('label');
+      labelEl.className = 'filter-item';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = true;
+      checkbox.value = option.key;
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) visibleStatuses.add(option.key);
+        else visibleStatuses.delete(option.key);
+        refresh();
+      });
+
+      const text = document.createElement('span');
+      text.textContent = option.label;
+      labelEl.appendChild(checkbox);
+      labelEl.appendChild(text);
+      statusFilterList.appendChild(labelEl);
+    });
+  }
+
   function renderDetail(d) {
     const out  = allEdges.filter(e => (e.source.id || e.source) === d.id);
     const into = allEdges.filter(e => (e.target.id || e.target) === d.id);
@@ -296,7 +367,7 @@ window.addEventListener('load', function () {
     `;
   }
 
-  document.getElementById('uc-search').addEventListener('input', e => {
+  if (searchInput) searchInput.addEventListener('input', e => {
     searchTerm = e.target.value.trim();
     refresh();
     if (searchTerm) {
@@ -309,6 +380,21 @@ window.addEventListener('load', function () {
       }
     }
   });
+
+  if (sideToggle && layout) {
+    sideToggle.addEventListener('click', () => {
+      const collapsed = layout.classList.toggle('side-collapsed');
+      sideToggle.textContent = collapsed ? '⟨' : '⟩';
+      sideToggle.setAttribute('aria-expanded', String(!collapsed));
+      setTimeout(() => {
+        width  = svgEl.parentElement.clientWidth  || 800;
+        height = svgEl.parentElement.clientHeight || 600;
+        svg.attr('width', width).attr('height', height);
+        functionCenters = computeFunctionCenters();
+        sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.18).restart();
+      }, 180);
+    });
+  }
 
   window.addEventListener('resize', () => {
     width  = svgEl.parentElement.clientWidth  || 800;
@@ -325,6 +411,7 @@ window.addEventListener('load', function () {
   });
 
   renderFunctionFilters();
+  renderStatusFilters();
   refresh();
   info.textContent = `${allNodes.length} use cases · ${allEdges.length} relationships · drag to pan · scroll to zoom · click a node`;
 });
