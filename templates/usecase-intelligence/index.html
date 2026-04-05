@@ -61,18 +61,49 @@ html, body { height: 100%; overflow: hidden; }
   font-size: 12px;
 }
 .logo-candidates {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 .logo-candidate {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-surface);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.logo-candidate-image {
+  width: 100%;
+  height: 70px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  object-fit: contain;
+}
+.logo-candidate-name {
   font-size: 11px;
-  padding: 4px 8px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.logo-candidate-actions {
+  display: flex;
+  gap: 6px;
+}
+.logo-candidate-btn {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 11px;
+  padding: 4px 6px;
   cursor: pointer;
 }
+.logo-candidate-btn.accept { border-color: #16a34a; color: #166534; }
+.logo-candidate-btn.reject { border-color: #dc2626; color: #991b1b; }
 .logo-dropzone {
   border: 1px dashed var(--border);
   border-radius: var(--radius);
