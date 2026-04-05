@@ -4,8 +4,10 @@
 {% block head %}
 <style>
 html, body { height: 100%; overflow: hidden; }
-.uci-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; height: calc(100vh - 52px); overflow: hidden; }
-.uci-layout.side-collapsed { grid-template-columns: minmax(0, 1fr) 42px; }
+.uci-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px 0; height: calc(100vh - 52px); overflow: hidden; transition: grid-template-columns 0.28s ease; }
+.uci-layout.detail-open { grid-template-columns: minmax(0, 1fr) 320px 360px; }
+.uci-layout.side-collapsed { grid-template-columns: minmax(0, 1fr) 42px 0; }
+.uci-layout.side-collapsed.detail-open { grid-template-columns: minmax(0, 1fr) 42px 360px; }
 .graph-pane {
   display: flex;
   flex-direction: column;
@@ -59,18 +61,49 @@ html, body { height: 100%; overflow: hidden; }
   font-size: 12px;
 }
 .logo-candidates {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 .logo-candidate {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-surface);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.logo-candidate-image {
+  width: 100%;
+  height: 70px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  object-fit: contain;
+}
+.logo-candidate-name {
   font-size: 11px;
-  padding: 4px 8px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.logo-candidate-actions {
+  display: flex;
+  gap: 6px;
+}
+.logo-candidate-btn {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 11px;
+  padding: 4px 6px;
   cursor: pointer;
 }
+.logo-candidate-btn.accept { border-color: #16a34a; color: #166534; }
+.logo-candidate-btn.reject { border-color: #dc2626; color: #991b1b; }
 .logo-dropzone {
   border: 1px dashed var(--border);
   border-radius: var(--radius);
@@ -169,6 +202,33 @@ html, body { height: 100%; overflow: hidden; }
 .filter-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(15, 23, 42, 0.2); }
 .ctrl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
 
+.node-inspector-pane {
+  position: relative;
+  border-left: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden;
+  transform: translateX(100%);
+  transition: transform 0.28s ease;
+}
+.uci-layout.detail-open .node-inspector-pane { transform: translateX(0); }
+.detail-toggle {
+  position: absolute;
+  top: 10px;
+  left: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 20;
+}
+.node-inspector-content {
+  height: 100%;
+  padding: 24px 20px 24px 24px;
+  overflow-y: auto;
+}
 .node-detail { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--bg); }
 .node-detail h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
 .nd-empty { font-size: 13px; color: var(--text-muted); }
@@ -197,9 +257,13 @@ html, body { height: 100%; overflow: hidden; }
 .classify-section textarea { resize: vertical; min-height: 70px; }
 
 @media (max-width: 1024px) {
-  .uci-layout { grid-template-columns: 1fr; }
+  .uci-layout,
+  .uci-layout.detail-open,
+  .uci-layout.side-collapsed,
+  .uci-layout.side-collapsed.detail-open { grid-template-columns: 1fr; }
   .side-pane { border-top: 1px solid var(--border); }
-  .side-toggle { display: none; }
+  .side-toggle, .detail-toggle { display: none; }
+  .node-inspector-pane { transform: none; border-top: 1px solid var(--border); }
 }
 </style>
 {% endblock %}
@@ -280,10 +344,6 @@ html, body { height: 100%; overflow: hidden; }
         <div class="stat"><div class="stat-val">{{ edge_count }}</div><div class="stat-lbl">Relationships</div></div>
       </div>
 
-      <div class="node-detail" id="node-detail">
-        <div class="nd-empty">Click a node to inspect it.</div>
-      </div>
-
       <div class="classify-section">
         <h3>Classify a use case</h3>
         <form action="/uci/classify" method="POST">
@@ -310,6 +370,15 @@ html, body { height: 100%; overflow: hidden; }
       </div>
     </div>
   </div>
+
+  <aside class="node-inspector-pane" id="node-inspector-pane" aria-live="polite">
+    <button class="detail-toggle" id="detail-toggle" aria-expanded="false" aria-controls="node-inspector-content">⟨</button>
+    <div class="node-inspector-content" id="node-inspector-content">
+      <div class="node-detail" id="node-detail">
+        <div class="nd-empty">Click a node to inspect it.</div>
+      </div>
+    </div>
+  </aside>
 </div>
 {% endblock %}
 
@@ -359,25 +428,58 @@ html, body { height: 100%; overflow: hidden; }
     const query = (input?.value || '').trim();
     if (!query || !resultsEl) return;
 
-    resultsEl.innerHTML = '<span class="logo-hint">Searching…</span>';
+    resultsEl.innerHTML = '<span class="logo-hint">Searching web for logos…</span>';
 
     try {
-      const response = await fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?query=${encodeURIComponent(query)}`);
-      const candidates = await response.json();
+      const response = await fetch(`/uci/logo-search?query=${encodeURIComponent(query)}`);
+      const payload = await response.json();
+      const candidates = payload?.results || [];
       resultsEl.innerHTML = '';
 
-      (candidates || []).slice(0, 3).forEach((candidate) => {
+      candidates.slice(0, 6).forEach((candidate) => {
         if (!candidate.logo) return;
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'logo-candidate';
-        button.textContent = `+ ${candidate.name}`;
-        button.addEventListener('click', () => addLogo(zone, candidate.logo));
-        resultsEl.appendChild(button);
+
+        const card = document.createElement('div');
+        card.className = 'logo-candidate';
+
+        const img = document.createElement('img');
+        img.className = 'logo-candidate-image';
+        img.src = candidate.logo;
+        img.alt = candidate.name || `${query} logo candidate`;
+        img.loading = 'lazy';
+
+        const name = document.createElement('div');
+        name.className = 'logo-candidate-name';
+        name.textContent = candidate.name || query;
+
+        const actions = document.createElement('div');
+        actions.className = 'logo-candidate-actions';
+
+        const acceptBtn = document.createElement('button');
+        acceptBtn.type = 'button';
+        acceptBtn.className = 'logo-candidate-btn accept';
+        acceptBtn.textContent = 'Accept';
+        acceptBtn.addEventListener('click', () => {
+          addLogo(zone, candidate.full_image || candidate.logo);
+          card.remove();
+        });
+
+        const rejectBtn = document.createElement('button');
+        rejectBtn.type = 'button';
+        rejectBtn.className = 'logo-candidate-btn reject';
+        rejectBtn.textContent = 'Reject';
+        rejectBtn.addEventListener('click', () => card.remove());
+
+        actions.appendChild(acceptBtn);
+        actions.appendChild(rejectBtn);
+        card.appendChild(img);
+        card.appendChild(name);
+        card.appendChild(actions);
+        resultsEl.appendChild(card);
       });
 
       if (!resultsEl.children.length) {
-        resultsEl.innerHTML = '<span class="logo-hint">No candidates found.</span>';
+        resultsEl.innerHTML = '<span class="logo-hint">No logo candidates found.</span>';
       }
     } catch (err) {
       resultsEl.innerHTML = '<span class="logo-hint">Search unavailable.</span>';

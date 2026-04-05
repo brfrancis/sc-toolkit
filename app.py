@@ -1,9 +1,13 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, jsonify
 import git
 import hmac
 import hashlib
 import os
 import json
+from urllib.parse import urlencode, urlparse
+from urllib.request import Request, urlopen
+import re
+import html
 
 app = Flask(__name__)
 
@@ -170,7 +174,13 @@ def uci_index():
             if node_id in seen_node_ids:
                 continue
             seen_node_ids.add(node_id)
-            nodes.append({'id': node_id, 'function': row['Function'], 'department': row['Department']})
+            description = (row.get('Description') or '').strip()
+            nodes.append({
+                'id': node_id,
+                'function': row['Function'],
+                'department': row['Department'],
+                'description': description if description else '--',
+            })
             functions.add(row['Function'])
     
     edges = []
@@ -195,6 +205,110 @@ def uci_index():
         dataset_options=[{'prefix': d['prefix'], 'label': d['label']} for d in dataset_options],
         selected_dataset=selected_option['prefix'],
     )
+
+
+@app.route('/uci/logo-search')
+def uci_logo_search():
+    query = (request.args.get('query') or '').strip()
+    if not query:
+        return jsonify({'results': []})
+
+    api_key = os.environ.get('GOOGLE_CSE_API_KEY', '').strip()
+    cse_id = os.environ.get('GOOGLE_CSE_ID', '').strip()
+
+    # Preferred route: official Google Custom Search JSON API (image search mode).
+    if api_key and cse_id:
+        params = urlencode({
+            'key': api_key,
+            'cx': cse_id,
+            'q': f'{query} logo',
+            'searchType': 'image',
+            'safe': 'active',
+            'num': 6,
+            'imgSize': 'medium',
+        })
+        api_url = f'https://www.googleapis.com/customsearch/v1?{params}'
+        try:
+            req = Request(api_url, headers={'User-Agent': 'sc-toolkit/1.0 (google-image-search)'})
+            with urlopen(req, timeout=8) as response:
+                payload = json.loads(response.read().decode('utf-8'))
+
+            items = payload.get('items', [])
+            results = []
+            for item in items:
+                image_data = item.get('image') or {}
+                logo_url = image_data.get('thumbnailLink') or item.get('link')
+                if not logo_url:
+                    continue
+                source = item.get('displayLink') or ''
+                results.append({
+                    'name': item.get('title') or source or query,
+                    'logo': logo_url,
+                    'source': source,
+                    'full_image': item.get('link') or logo_url,
+                })
+                if len(results) >= 6:
+                    break
+            return jsonify({'results': results})
+        except Exception:
+            pass
+
+    # Fallback: scrape Google Images HTML when API credentials are unavailable.
+    search_query = f'{query} logo'
+    params = urlencode({'q': search_query, 'tbm': 'isch', 'hl': 'en', 'safe': 'active'})
+    google_url = f'https://www.google.com/search?{params}'
+
+    try:
+        req = Request(google_url, headers={
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+                          '(KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+        })
+        with urlopen(req, timeout=8) as response:
+            page_html = response.read().decode('utf-8', errors='ignore')
+    except Exception:
+        return jsonify({'results': []})
+
+    patterns = [
+        r'\"ou\":\"(https?://[^\"\\]+)\"',
+        r'\\[\"(https?://[^\"\\]+)\",[0-9]+,[0-9]+\\]',
+        r'\"(https?://[^\"\\]+(?:png|jpg|jpeg|webp|svg))\"',
+    ]
+
+    extracted = []
+    for pattern in patterns:
+        extracted.extend(re.findall(pattern, page_html))
+
+    cleaned_urls = []
+    seen = set()
+    for raw_url in extracted:
+        url = html.unescape(raw_url).replace('\\u003d', '=').replace('\\u0026', '&')
+        if 'gstatic.com' in url or 'googleusercontent.com' in url:
+            continue
+        if not url.startswith('http'):
+            continue
+        if url in seen:
+            continue
+        seen.add(url)
+        cleaned_urls.append(url)
+        if len(cleaned_urls) >= 10:
+            break
+
+    results = []
+    for url in cleaned_urls:
+        host = (urlparse(url).netloc or '').replace('www.', '')
+        results.append({
+            'name': host or query,
+            'logo': url,
+            'source': host,
+            'full_image': url,
+        })
+        if len(results) >= 6:
+            break
+
+    return jsonify({'results': results})
+
+
 
 
 @app.route('/uci/classify', methods=['POST'])
