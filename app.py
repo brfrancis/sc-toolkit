@@ -4,10 +4,8 @@ import hmac
 import hashlib
 import os
 import json
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-import re
-import html
 
 app = Flask(__name__)
 
@@ -213,97 +211,43 @@ def uci_logo_search():
     if not query:
         return jsonify({'results': []})
 
-    api_key = os.environ.get('GOOGLE_CSE_API_KEY', '').strip()
-    cse_id = os.environ.get('GOOGLE_CSE_ID', '').strip()
-
-    # Preferred route: official Google Custom Search JSON API (image search mode).
-    if api_key and cse_id:
-        params = urlencode({
-            'key': api_key,
-            'cx': cse_id,
-            'q': f'{query} logo',
-            'searchType': 'image',
-            'safe': 'active',
-            'num': 6,
-            'imgSize': 'medium',
-        })
-        api_url = f'https://www.googleapis.com/customsearch/v1?{params}'
-        try:
-            req = Request(api_url, headers={'User-Agent': 'sc-toolkit/1.0 (google-image-search)'})
-            with urlopen(req, timeout=8) as response:
-                payload = json.loads(response.read().decode('utf-8'))
-
-            items = payload.get('items', [])
-            results = []
-            for item in items:
-                image_data = item.get('image') or {}
-                logo_url = image_data.get('thumbnailLink') or item.get('link')
-                if not logo_url:
-                    continue
-                source = item.get('displayLink') or ''
-                results.append({
-                    'name': item.get('title') or source or query,
-                    'logo': logo_url,
-                    'source': source,
-                    'full_image': item.get('link') or logo_url,
-                })
-                if len(results) >= 6:
-                    break
-            return jsonify({'results': results})
-        except Exception:
-            pass
-
-    # Fallback: scrape Google Images HTML when API credentials are unavailable.
-    search_query = f'{query} logo'
-    params = urlencode({'q': search_query, 'tbm': 'isch', 'hl': 'en', 'safe': 'active'})
-    google_url = f'https://www.google.com/search?{params}'
+    params = urlencode({
+        'action': 'query',
+        'format': 'json',
+        'generator': 'search',
+        'gsrsearch': f'{query} company logo',
+        'gsrlimit': 6,
+        'prop': 'pageimages|info',
+        'piprop': 'thumbnail',
+        'pithumbsize': 160,
+        'inprop': 'url',
+        'origin': '*',
+    })
+    wiki_url = f'https://en.wikipedia.org/w/api.php?{params}'
 
     try:
-        req = Request(google_url, headers={
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-                          '(KHTML, like Gecko) Chrome/124.0 Safari/537.36',
-            'Accept-Language': 'en-US,en;q=0.9',
-        })
-        with urlopen(req, timeout=8) as response:
-            page_html = response.read().decode('utf-8', errors='ignore')
+        req = Request(wiki_url, headers={'User-Agent': 'sc-toolkit/1.0 (logo-search)'})
+        with urlopen(req, timeout=6) as response:
+            payload = json.loads(response.read().decode('utf-8'))
     except Exception:
         return jsonify({'results': []})
 
-    patterns = [
-        r'\"ou\":\"(https?://[^\"\\]+)\"',
-        r'\\[\"(https?://[^\"\\]+)\",[0-9]+,[0-9]+\\]',
-        r'\"(https?://[^\"\\]+(?:png|jpg|jpeg|webp|svg))\"',
-    ]
-
-    extracted = []
-    for pattern in patterns:
-        extracted.extend(re.findall(pattern, page_html))
-
-    cleaned_urls = []
-    seen = set()
-    for raw_url in extracted:
-        url = html.unescape(raw_url).replace('\\u003d', '=').replace('\\u0026', '&')
-        if 'gstatic.com' in url or 'googleusercontent.com' in url:
-            continue
-        if not url.startswith('http'):
-            continue
-        if url in seen:
-            continue
-        seen.add(url)
-        cleaned_urls.append(url)
-        if len(cleaned_urls) >= 10:
-            break
+    pages = list((payload.get('query') or {}).get('pages', {}).values())
+    pages.sort(key=lambda page: int(page.get('index', 9999)))
 
     results = []
-    for url in cleaned_urls:
-        host = (urlparse(url).netloc or '').replace('www.', '')
-        results.append({
-            'name': host or query,
-            'logo': url,
-            'source': host,
-            'full_image': url,
-        })
-        if len(results) >= 6:
+    seen = set()
+    for page in pages:
+        logo = (page.get('thumbnail') or {}).get('source')
+        title = (page.get('title') or '').strip()
+        if not logo or not title:
+            continue
+        key = (title.lower(), logo)
+        if key in seen:
+            continue
+        seen.add(key)
+        results.append({'name': title, 'logo': logo})
+        if len(results) >= 5:
             break
 
     return jsonify({'results': results})

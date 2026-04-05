@@ -436,46 +436,14 @@ html, body { height: 100%; overflow: hidden; }
       const candidates = payload?.results || [];
       resultsEl.innerHTML = '';
 
-      candidates.slice(0, 6).forEach((candidate) => {
+      candidates.slice(0, 5).forEach((candidate) => {
         if (!candidate.logo) return;
-
-        const card = document.createElement('div');
-        card.className = 'logo-candidate';
-
-        const img = document.createElement('img');
-        img.className = 'logo-candidate-image';
-        img.src = candidate.logo;
-        img.alt = candidate.name || `${query} logo candidate`;
-        img.loading = 'lazy';
-
-        const name = document.createElement('div');
-        name.className = 'logo-candidate-name';
-        name.textContent = candidate.name || query;
-
-        const actions = document.createElement('div');
-        actions.className = 'logo-candidate-actions';
-
-        const acceptBtn = document.createElement('button');
-        acceptBtn.type = 'button';
-        acceptBtn.className = 'logo-candidate-btn accept';
-        acceptBtn.textContent = 'Accept';
-        acceptBtn.addEventListener('click', () => {
-          addLogo(zone, candidate.full_image || candidate.logo);
-          card.remove();
-        });
-
-        const rejectBtn = document.createElement('button');
-        rejectBtn.type = 'button';
-        rejectBtn.className = 'logo-candidate-btn reject';
-        rejectBtn.textContent = 'Reject';
-        rejectBtn.addEventListener('click', () => card.remove());
-
-        actions.appendChild(acceptBtn);
-        actions.appendChild(rejectBtn);
-        card.appendChild(img);
-        card.appendChild(name);
-        card.appendChild(actions);
-        resultsEl.appendChild(card);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'logo-candidate';
+        button.textContent = `+ ${candidate.name || query}`;
+        button.addEventListener('click', () => addLogo(zone, candidate.logo));
+        resultsEl.appendChild(button);
       });
 
       if (!resultsEl.children.length) {
