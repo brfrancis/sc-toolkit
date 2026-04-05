@@ -1,9 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, jsonify
 import git
 import hmac
 import hashlib
 import os
 import json
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 app = Flask(__name__)
 
@@ -170,7 +172,13 @@ def uci_index():
             if node_id in seen_node_ids:
                 continue
             seen_node_ids.add(node_id)
-            nodes.append({'id': node_id, 'function': row['Function'], 'department': row['Department']})
+            description = (row.get('Description') or '').strip()
+            nodes.append({
+                'id': node_id,
+                'function': row['Function'],
+                'department': row['Department'],
+                'description': description if description else '--',
+            })
             functions.add(row['Function'])
     
     edges = []
@@ -195,6 +203,56 @@ def uci_index():
         dataset_options=[{'prefix': d['prefix'], 'label': d['label']} for d in dataset_options],
         selected_dataset=selected_option['prefix'],
     )
+
+
+@app.route('/uci/logo-search')
+def uci_logo_search():
+    query = (request.args.get('query') or '').strip()
+    if not query:
+        return jsonify({'results': []})
+
+    params = urlencode({
+        'action': 'query',
+        'format': 'json',
+        'generator': 'search',
+        'gsrsearch': f'{query} company logo',
+        'gsrlimit': 6,
+        'prop': 'pageimages|info',
+        'piprop': 'thumbnail',
+        'pithumbsize': 160,
+        'inprop': 'url',
+        'origin': '*',
+    })
+    wiki_url = f'https://en.wikipedia.org/w/api.php?{params}'
+
+    try:
+        req = Request(wiki_url, headers={'User-Agent': 'sc-toolkit/1.0 (logo-search)'})
+        with urlopen(req, timeout=6) as response:
+            payload = json.loads(response.read().decode('utf-8'))
+    except Exception:
+        return jsonify({'results': []})
+
+    pages = list((payload.get('query') or {}).get('pages', {}).values())
+    pages.sort(key=lambda page: int(page.get('index', 9999)))
+
+    results = []
+    seen = set()
+    for page in pages:
+        logo = (page.get('thumbnail') or {}).get('source')
+        title = (page.get('title') or '').strip()
+        if not logo or not title:
+            continue
+        key = (title.lower(), logo)
+        if key in seen:
+            continue
+        seen.add(key)
+        results.append({'name': title, 'logo': logo})
+        if len(results) >= 5:
+            break
+
+    return jsonify({'results': results})
+
+
 
 
 @app.route('/uci/classify', methods=['POST'])
