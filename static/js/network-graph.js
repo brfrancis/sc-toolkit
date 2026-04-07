@@ -154,6 +154,10 @@ window.addEventListener('load', function () {
     return 0.2;
   }
 
+  function edgeVisible(d) {
+    return edgeOpacity(d) > 0;
+  }
+
   function computeFunctionCenters() {
     const radius = Math.min(width, height) * 0.28;
     const cx = width / 2;
@@ -261,7 +265,10 @@ window.addEventListener('load', function () {
       .attr('fill-opacity', nodeOpacity)
       .attr('display', d => (visibleFunctions.has(d.function) && statusVisible(d)) ? null : 'none');
     node.attr('stroke', nodeStroke).attr('stroke-width', nodeStrokeWidth);
-    link.attr('stroke-opacity', edgeOpacity);
+    link
+      .attr('stroke-opacity', edgeOpacity)
+      .attr('display', d => (edgeVisible(d) ? null : 'none'))
+      .attr('marker-end', d => (edgeVisible(d) ? 'url(#edge-arrow)' : null));
     label.attr('opacity', d => {
       if (!visibleFunctions.has(d.function)) return 0;
       if (!statusVisible(d)) return 0;

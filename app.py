@@ -226,10 +226,9 @@ def uci_logo_search():
             'safe': 'active',
             'num': 10,
             'imgSize': 'medium',
-            'imgType': 'clipart',
-            'fileType': 'png',
+            'rights': 'cc_publicdomain,cc_attribute',
         })
-        api_url = f'https://www.googleapis.com/customsearch/v1?{params}'
+        api_url = f'https://customsearch.googleapis.com/customsearch/v1?{params}'
         try:
             req = Request(api_url, headers={'User-Agent': 'sc-toolkit/1.0 (google-image-search)'})
             with urlopen(req, timeout=8) as response:
@@ -257,7 +256,11 @@ def uci_logo_search():
                 })
                 if len(results) >= 6:
                     break
-            return jsonify({'results': results})
+
+            # If CSE credentials are valid but image filters are strict/noisy, fall through
+            # to the scraper fallback instead of surfacing an unavailable state on the UI.
+            if results:
+                return jsonify({'results': results})
         except Exception:
             pass
 

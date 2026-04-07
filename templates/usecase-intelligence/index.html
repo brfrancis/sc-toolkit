@@ -447,6 +447,9 @@ html, body { height: 100%; overflow: hidden; }
 
     try {
       const response = await fetch(`/uci/logo-search?query=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error(`Logo search failed with status ${response.status}`);
+      }
       const payload = await response.json();
       const candidates = payload?.results || [];
       resultsEl.innerHTML = '';
