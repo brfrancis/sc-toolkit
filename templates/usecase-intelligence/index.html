@@ -17,11 +17,15 @@ html, body { height: 100%; overflow: hidden; }
   border-right: 1px solid var(--border);
   overflow: hidden;
 }
-.zone {
+.zone-shell {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg);
   min-height: 84px;
+  padding: 0;
+}
+.zone {
+  background: transparent;
 }
 .zone summary {
   cursor: pointer;
@@ -34,6 +38,8 @@ html, body { height: 100%; overflow: hidden; }
   align-items: center;
   justify-content: space-between;
 }
+.zone summary .caret { transition: transform 0.18s ease; }
+.zone:not([open]) summary .caret { transform: rotate(-90deg); }
 .zone summary::-webkit-details-marker { display: none; }
 .zone-body {
   border-top: 1px solid var(--border);
@@ -42,6 +48,7 @@ html, body { height: 100%; overflow: hidden; }
   flex-direction: column;
   gap: 8px;
 }
+.zone-logos { padding: 0 10px 10px; }
 .logo-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -272,19 +279,23 @@ html, body { height: 100%; overflow: hidden; }
 <div class="uci-layout">
 
   <div class="graph-pane">
-    <details class="zone" open>
-      <summary>Partners / Ecosystem <span>▲</span></summary>
-      <div class="zone-body">
-        <div class="logo-controls">
-          <input type="text" class="logo-search-input" placeholder="Search partner logo (e.g. Snowflake)" data-role="search-input" data-zone="partners">
-          <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="partners">Search</button>
+    <div class="zone-shell">
+      <details class="zone" open>
+        <summary>Partners / Ecosystem <span class="caret">▲</span></summary>
+        <div class="zone-body">
+          <div class="logo-controls">
+            <input type="text" class="logo-search-input" placeholder="Search partner logo (e.g. Snowflake)" data-role="search-input" data-zone="partners">
+            <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="partners">Search</button>
+          </div>
+          <div class="logo-candidates" data-role="candidates" data-zone="partners"></div>
         </div>
-        <div class="logo-candidates" data-role="candidates" data-zone="partners"></div>
+      </details>
+      <div class="zone-logos">
         <div class="logo-dropzone" data-role="dropzone" data-zone="partners">
           <span class="logo-hint">Drop an image here or choose a search result.</span>
         </div>
       </div>
-    </details>
+    </div>
 
     <div class="network-zone">
       <div class="network-zone-title">Use Case Network</div>
@@ -292,19 +303,23 @@ html, body { height: 100%; overflow: hidden; }
       <div class="graph-info" id="graph-info">Loading...</div>
     </div>
 
-    <details class="zone" open>
-      <summary>Data Sources / Systems <span>▲</span></summary>
-      <div class="zone-body">
-        <div class="logo-controls">
-          <input type="text" class="logo-search-input" placeholder="Search source logo (e.g. Salesforce)" data-role="search-input" data-zone="sources">
-          <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="sources">Search</button>
+    <div class="zone-shell">
+      <details class="zone" open>
+        <summary>Data Sources / Systems <span class="caret">▲</span></summary>
+        <div class="zone-body">
+          <div class="logo-controls">
+            <input type="text" class="logo-search-input" placeholder="Search source logo (e.g. Salesforce)" data-role="search-input" data-zone="sources">
+            <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="sources">Search</button>
+          </div>
+          <div class="logo-candidates" data-role="candidates" data-zone="sources"></div>
         </div>
-        <div class="logo-candidates" data-role="candidates" data-zone="sources"></div>
+      </details>
+      <div class="zone-logos">
         <div class="logo-dropzone" data-role="dropzone" data-zone="sources">
           <span class="logo-hint">Drop an image here or choose a search result.</span>
         </div>
       </div>
-    </details>
+    </div>
   </div>
 
   <div class="side-pane" id="side-pane">
@@ -436,14 +451,46 @@ html, body { height: 100%; overflow: hidden; }
       const candidates = payload?.results || [];
       resultsEl.innerHTML = '';
 
-      candidates.slice(0, 5).forEach((candidate) => {
+      candidates.slice(0, 6).forEach((candidate) => {
         if (!candidate.logo) return;
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'logo-candidate';
-        button.textContent = `+ ${candidate.name || query}`;
-        button.addEventListener('click', () => addLogo(zone, candidate.logo));
-        resultsEl.appendChild(button);
+
+        const card = document.createElement('div');
+        card.className = 'logo-candidate';
+
+        const img = document.createElement('img');
+        img.className = 'logo-candidate-image';
+        img.src = candidate.logo;
+        img.alt = candidate.name || `${query} logo candidate`;
+        img.loading = 'lazy';
+
+        const name = document.createElement('div');
+        name.className = 'logo-candidate-name';
+        name.textContent = candidate.name || query;
+
+        const actions = document.createElement('div');
+        actions.className = 'logo-candidate-actions';
+
+        const acceptBtn = document.createElement('button');
+        acceptBtn.type = 'button';
+        acceptBtn.className = 'logo-candidate-btn accept';
+        acceptBtn.textContent = 'Accept';
+        acceptBtn.addEventListener('click', () => {
+          addLogo(zone, candidate.full_image || candidate.logo);
+          card.remove();
+        });
+
+        const rejectBtn = document.createElement('button');
+        rejectBtn.type = 'button';
+        rejectBtn.className = 'logo-candidate-btn reject';
+        rejectBtn.textContent = 'Reject';
+        rejectBtn.addEventListener('click', () => card.remove());
+
+        actions.appendChild(acceptBtn);
+        actions.appendChild(rejectBtn);
+        card.appendChild(img);
+        card.appendChild(name);
+        card.appendChild(actions);
+        resultsEl.appendChild(card);
       });
 
       if (!resultsEl.children.length) {
