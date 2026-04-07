@@ -39,11 +39,10 @@ window.addEventListener('load', function () {
 
   const g = svg.append('g');
 
-  svg.call(
-    d3.zoom()
-      .scaleExtent([0.05, 4])
-      .on('zoom', e => g.attr('transform', e.transform))
-  );
+  const zoomBehavior = d3.zoom()
+    .scaleExtent([0.05, 4])
+    .on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoomBehavior);
 
   const allNodes = GRAPH_DATA.nodes.map(d => ({ ...d }));
   const allEdges = GRAPH_DATA.edges.map(d => ({ ...d }));
@@ -97,10 +96,18 @@ window.addEventListener('load', function () {
     functionColors[fn] = generateFunctionColour(index);
   });
   const visibleFunctions = new Set(functionKeys);
+  const functionToUseCases = {};
+  functionKeys.forEach(fn => {
+    functionToUseCases[fn] = allNodes
+      .filter(node => node.function === fn)
+      .map(node => node.id)
+      .sort((a, b) => a.localeCompare(b));
+  });
   const implementedIds = new Set();
   const vetoIds = new Set();
   const implementedConnections = new Set();
   const visibleStatuses = new Set(['implemented', 'adjacent', 'vetoed', 'none']);
+  let statusFilterCountEls = {};
   let selectedNode = null;
 
   let searchTerm   = '';
@@ -275,6 +282,24 @@ window.addEventListener('load', function () {
       if (searchTerm) return d.id.toLowerCase().includes(searchTerm.toLowerCase()) ? 0.95 : 0.08;
       return 0.6;
     }).attr('display', d => (visibleFunctions.has(d.function) && statusVisible(d)) ? null : 'none');
+    updateStatusCounts();
+  }
+
+  function statusCounts() {
+    const counts = { implemented: 0, adjacent: 0, vetoed: 0, none: 0 };
+    allNodes.forEach(n => {
+      const status = nodeStatus(n);
+      if (counts[status] !== undefined) counts[status] += 1;
+    });
+    return counts;
+  }
+
+  function updateStatusCounts() {
+    const counts = statusCounts();
+    Object.entries(statusFilterCountEls).forEach(([key, el]) => {
+      if (!el) return;
+      el.textContent = `(${counts[key] || 0})`;
+    });
   }
 
   function setDetailOpen(isOpen) {
@@ -326,6 +351,7 @@ window.addEventListener('load', function () {
       if (implementedIds.has(tgt) && !implementedIds.has(src)) implementedConnections.add(src);
     });
 
+    syncUseCaseStatusCheckboxes();
     refresh();
   }
 
@@ -339,6 +365,7 @@ window.addEventListener('load', function () {
       if (exact) vetoIds.add(exact);
     });
 
+    syncUseCaseStatusCheckboxes();
     refresh();
   }
 
@@ -346,6 +373,9 @@ window.addEventListener('load', function () {
     if (!fnFilterList) return;
     fnFilterList.innerHTML = '';
     functionKeys.forEach(fn => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'function-filter-group';
+
       const labelEl = document.createElement('label');
       labelEl.className = 'filter-item';
 
@@ -367,8 +397,84 @@ window.addEventListener('load', function () {
       labelEl.appendChild(checkbox);
       labelEl.appendChild(swatch);
       labelEl.appendChild(text);
-      fnFilterList.appendChild(labelEl);
+      wrapper.appendChild(labelEl);
+
+      const useCaseList = document.createElement('div');
+      useCaseList.className = 'function-usecase-list';
+      (functionToUseCases[fn] || []).forEach(useCaseId => {
+        const row = document.createElement('div');
+        row.className = 'function-usecase-row';
+
+        const nameBtn = document.createElement('button');
+        nameBtn.type = 'button';
+        nameBtn.className = 'function-usecase-name';
+        nameBtn.textContent = useCaseId;
+        nameBtn.addEventListener('click', () => {
+          const nodeData = nodeById[useCaseId];
+          if (!nodeData) return;
+          selectNode(nodeData);
+          if (nodeData.x != null && nodeData.y != null) {
+            const targetTransform = d3.zoomIdentity.translate(width / 2 - nodeData.x, height / 2 - nodeData.y).scale(1.8);
+            svg.transition().duration(350).call(zoomBehavior.transform, targetTransform);
+          }
+        });
+
+        const statuses = document.createElement('div');
+        statuses.className = 'function-usecase-statuses';
+        const statusOptions = [
+          { key: 'none', label: 'No status', colorClass: 'status-none' },
+          { key: 'implemented', label: 'Already implemented', colorClass: 'status-implemented' },
+          { key: 'vetoed', label: 'Vetoed', colorClass: 'status-vetoed' },
+        ];
+
+        statusOptions.forEach((option) => {
+          const statusLabel = document.createElement('label');
+          statusLabel.className = `function-usecase-status ${option.colorClass}`;
+          statusLabel.title = option.label;
+
+          const statusCheckbox = document.createElement('input');
+          statusCheckbox.type = 'checkbox';
+          statusCheckbox.dataset.useCaseId = useCaseId;
+          statusCheckbox.dataset.status = option.key;
+          statusCheckbox.addEventListener('change', () => {
+            const isChecked = statusCheckbox.checked;
+            row.querySelectorAll('input[type="checkbox"]').forEach((box) => {
+              box.checked = false;
+            });
+
+            if (!isChecked || option.key === 'none') {
+              vetoIds.delete(useCaseId);
+              implementedIds.delete(useCaseId);
+            } else if (option.key === 'implemented') {
+              implementedIds.add(useCaseId);
+              vetoIds.delete(useCaseId);
+            } else if (option.key === 'vetoed') {
+              vetoIds.add(useCaseId);
+              implementedIds.delete(useCaseId);
+            }
+
+            syncUseCaseStatusCheckboxes();
+            updateAdjacentFromImplemented();
+            refresh();
+          });
+
+          const marker = document.createElement('span');
+          marker.className = 'status-marker';
+          marker.textContent = option.key === 'none' ? '○' : '●';
+          statusLabel.appendChild(statusCheckbox);
+          statusLabel.appendChild(marker);
+          statuses.appendChild(statusLabel);
+        });
+
+        row.appendChild(nameBtn);
+        row.appendChild(statuses);
+        useCaseList.appendChild(row);
+      });
+      wrapper.appendChild(useCaseList);
+      fnFilterList.appendChild(wrapper);
     });
+
+    syncUseCaseStatusCheckboxes();
   }
 
   function renderStatusFilters() {
@@ -381,6 +487,7 @@ window.addEventListener('load', function () {
     ];
 
     statusFilterList.innerHTML = '';
+    statusFilterCountEls = {};
     statusOptions.forEach(option => {
       const labelEl = document.createElement('label');
       labelEl.className = 'filter-item';
@@ -407,7 +514,39 @@ window.addEventListener('load', function () {
         labelEl.appendChild(swatch);
       }
       labelEl.appendChild(text);
+      const count = document.createElement('span');
+      count.className = 'status-filter-count';
+      count.textContent = '(0)';
+      labelEl.appendChild(count);
+      statusFilterCountEls[option.key] = count;
       statusFilterList.appendChild(labelEl);
+    });
+    updateStatusCounts();
+  }
+
+  function updateAdjacentFromImplemented() {
+    implementedConnections.clear();
+    allEdges.forEach(e => {
+      const src = e.source.id || e.source;
+      const tgt = e.target.id || e.target;
+      if (implementedIds.has(src) && !implementedIds.has(tgt)) implementedConnections.add(tgt);
+      if (implementedIds.has(tgt) && !implementedIds.has(src)) implementedConnections.add(src);
+    });
+  }
+
+  function syncUseCaseStatusCheckboxes() {
+    if (!fnFilterList) return;
+    fnFilterList.querySelectorAll('.function-usecase-row').forEach(row => {
+      const useCaseId = row.querySelector('input[type="checkbox"]')?.dataset.useCaseId;
+      if (!useCaseId) return;
+
+      let activeStatus = 'none';
+      if (vetoIds.has(useCaseId)) activeStatus = 'vetoed';
+      else if (implementedIds.has(useCaseId)) activeStatus = 'implemented';
+
+      row.querySelectorAll('input[type="checkbox"]').forEach((box) => {
+        box.checked = box.dataset.status === activeStatus;
+      });
     });
   }
 
@@ -451,10 +590,7 @@ window.addEventListener('load', function () {
     if (searchTerm) {
       const match = allNodes.find(n => n.id.toLowerCase().includes(searchTerm.toLowerCase()));
       if (match && match.x) {
-        svg.transition().duration(400).call(
-          d3.zoom().transform,
-          d3.zoomIdentity.translate(width / 2 - match.x, height / 2 - match.y).scale(1.8)
-        );
+        svg.transition().duration(400).call(zoomBehavior.transform, d3.zoomIdentity.translate(width / 2 - match.x, height / 2 - match.y).scale(1.8));
       }
     }
   });
