@@ -6,6 +6,7 @@ import os
 import json
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 import re
 import html
 
@@ -216,6 +217,8 @@ def uci_logo_search():
     api_key = os.environ.get('GOOGLE_CSE_API_KEY', '').strip()
     cse_id = os.environ.get('GOOGLE_CSE_ID', '').strip()
 
+    issues = []
+
     # Preferred route: official Google Custom Search JSON API (image search mode).
     if api_key and cse_id:
         params = urlencode({
@@ -261,8 +264,28 @@ def uci_logo_search():
             # to the scraper fallback instead of surfacing an unavailable state on the UI.
             if results:
                 return jsonify({'results': results})
+            issues.append('Google Custom Search returned no usable image results.')
+        except HTTPError as err:
+            api_error = f'Google Custom Search failed ({err.code}).'
+            try:
+                error_payload = json.loads(err.read().decode('utf-8', errors='ignore'))
+                msg = ((error_payload.get('error') or {}).get('message') or '').strip()
+                if msg:
+                    api_error = f'{api_error} {msg}'
+            except Exception:
+                pass
+            issues.append(api_error)
+        except URLError:
+            issues.append('Google Custom Search is unreachable from the server.')
         except Exception:
-            pass
+            issues.append('Google Custom Search failed unexpectedly.')
+    else:
+        missing = []
+        if not api_key:
+            missing.append('GOOGLE_CSE_API_KEY')
+        if not cse_id:
+            missing.append('GOOGLE_CSE_ID')
+        issues.append(f"Google Custom Search credentials are missing ({', '.join(missing)}).")
 
     # Fallback: scrape Google Images HTML when API credentials are unavailable.
     search_query = f'{query} official logo'
@@ -278,7 +301,8 @@ def uci_logo_search():
         with urlopen(req, timeout=8) as response:
             page_html = response.read().decode('utf-8', errors='ignore')
     except Exception:
-        return jsonify({'results': []})
+        issues.append('Google Images HTML fallback is unavailable (likely blocked/rate-limited).')
+        page_html = ''
 
     patterns = [
         r'\"ou\":\"(https?://[^\"\\]+)\"',
@@ -317,7 +341,56 @@ def uci_logo_search():
         if len(results) >= 6:
             break
 
-    return jsonify({'results': results})
+    if results:
+        return jsonify({'results': results})
+
+    issues.append('Google Images fallback returned no usable image URLs.')
+
+    # Last fallback: Wikipedia page images.
+    wiki_params = urlencode({
+        'action': 'query',
+        'format': 'json',
+        'generator': 'search',
+        'gsrsearch': f'{query} logo',
+        'gsrlimit': 8,
+        'prop': 'pageimages|info',
+        'inprop': 'url',
+        'pithumbsize': 500,
+        'origin': '*',
+    })
+    wiki_url = f'https://en.wikipedia.org/w/api.php?{wiki_params}'
+    try:
+        req = Request(wiki_url, headers={'User-Agent': 'sc-toolkit/1.0 (wikipedia-logo-fallback)'})
+        with urlopen(req, timeout=8) as response:
+            payload = json.loads(response.read().decode('utf-8'))
+
+        wiki_results = []
+        pages = (payload.get('query') or {}).get('pages') or {}
+        for page in pages.values():
+            thumb = (page.get('thumbnail') or {}).get('source')
+            if not thumb:
+                continue
+            title = page.get('title') or query
+            full_page = page.get('fullurl') or 'wikipedia.org'
+            wiki_results.append({
+                'name': title,
+                'logo': thumb,
+                'source': 'wikipedia.org',
+                'full_image': thumb,
+                'reference': full_page,
+            })
+            if len(wiki_results) >= 6:
+                break
+
+        if wiki_results:
+            return jsonify({'results': wiki_results, 'fallback': 'wikipedia'})
+
+        issues.append('Wikipedia fallback returned no image candidates.')
+    except Exception:
+        issues.append('Wikipedia fallback failed.')
+
+    issue_text = ' | '.join(issues[-3:]) if issues else 'Unknown search issue.'
+    return jsonify({'results': [], 'issue': issue_text}), 503
 
 
 

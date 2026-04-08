@@ -472,10 +472,11 @@ html, body { height: 100%; overflow: hidden; }
 
     try {
       const response = await fetch(`/uci/logo-search?query=${encodeURIComponent(query)}`);
-      if (!response.ok) {
-        throw new Error(`Logo search failed with status ${response.status}`);
-      }
       const payload = await response.json();
+      if (!response.ok) {
+        const issue = payload?.issue || `Logo search failed with status ${response.status}`;
+        throw new Error(issue);
+      }
       const candidates = payload?.results || [];
       resultsEl.innerHTML = '';
 
@@ -525,7 +526,8 @@ html, body { height: 100%; overflow: hidden; }
         resultsEl.innerHTML = '<span class="logo-hint">No logo candidates found.</span>';
       }
     } catch (err) {
-      resultsEl.innerHTML = '<span class="logo-hint">Search unavailable.</span>';
+      const reason = err?.message || 'Unknown issue';
+      resultsEl.innerHTML = `<span class="logo-hint">Search unavailable: ${reason}</span>`;
       console.error('Logo search failed', err);
     }
   }
