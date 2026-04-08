@@ -225,6 +225,10 @@ html, body { height: 100%; overflow: hidden; }
 .function-usecase-count { color: var(--text-muted); font-size: 11px; margin-left: 4px; }
 .function-filter-body { border-top: 1px solid rgba(148, 163, 184, 0.22); padding: 6px; }
 .function-usecase-list { margin-left: 16px; display: flex; flex-direction: column; gap: 4px; }
+.function-filter-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+}
 .function-usecase-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: center; }
 .function-usecase-name {
   border: 0;
@@ -376,11 +380,15 @@ html, body { height: 100%; overflow: hidden; }
             {% endfor %}
           </select>
         </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-val">{{ node_count }}</div><div class="stat-lbl">Use cases</div></div>
+          <div class="stat"><div class="stat-val">{{ edge_count }}</div><div class="stat-lbl">Relationships</div></div>
+        </div>
         <div>
           <div class="ctrl-label">Filter by function</div>
           <details class="filter-panel" open>
             <summary>Show/hide functions</summary>
-            <div id="fn-filter-list" class="filter-list"></div>
+            <div id="fn-filter-list" class="filter-list function-filter-scroll"></div>
           </details>
         </div>
         <div>
@@ -390,18 +398,13 @@ html, body { height: 100%; overflow: hidden; }
             <div id="status-filter-list" class="filter-list"></div>
           </details>
         </div>
-        <div>
+        {# <div>
           <div class="ctrl-label">Search use case</div>
           <input type="text" id="uc-search" placeholder="Type to highlight...">
-        </div>
+        </div> #}
       </div>
 
-      <div class="stat-row">
-        <div class="stat"><div class="stat-val">{{ node_count }}</div><div class="stat-lbl">Use cases</div></div>
-        <div class="stat"><div class="stat-val">{{ edge_count }}</div><div class="stat-lbl">Relationships</div></div>
-      </div>
-
-      <div class="classify-section">
+      {# <div class="classify-section">
         <h3>Classify a use case</h3>
         <form action="/uci/classify" method="POST">
           <div class="form-group">
@@ -424,7 +427,7 @@ html, body { height: 100%; overflow: hidden; }
           </div>
           <button type="submit" class="btn-primary" style="width:100%">Classify and recommend</button>
         </form>
-      </div>
+      </div> #}
     </div>
   </div>
 
