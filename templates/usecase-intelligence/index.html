@@ -226,8 +226,14 @@ html, body { height: 100%; overflow: hidden; }
 .function-filter-body { border-top: 1px solid rgba(148, 163, 184, 0.22); padding: 6px; }
 .function-usecase-list { margin-left: 16px; display: flex; flex-direction: column; gap: 4px; }
 .function-filter-scroll {
-  max-height: 320px;
+  max-height: min(55vh, 420px);
   overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.function-filter-body {
+  max-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .function-usecase-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: center; }
 .function-usecase-name {
