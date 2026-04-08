@@ -206,7 +206,24 @@ html, body { height: 100%; overflow: hidden; }
   gap: 4px;
 }
 .filter-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-.function-filter-group { border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 4px 6px; background: rgba(148, 163, 184, 0.06); }
+.function-filter-group { border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; background: rgba(148, 163, 184, 0.06); overflow: hidden; }
+.function-filter-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 4px 6px;
+}
+.function-filter-summary::-webkit-details-marker { display: none; }
+.function-filter-summary-row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.function-filter-caret { font-size: 10px; color: var(--text-muted); width: 10px; text-align: center; transition: transform 0.18s ease; }
+.function-filter-group:not([open]) .function-filter-caret { transform: rotate(-90deg); }
+.function-filter-label { display: inline-flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.function-filter-label-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.function-usecase-count { color: var(--text-muted); font-size: 11px; margin-left: 4px; }
+.function-filter-body { border-top: 1px solid rgba(148, 163, 184, 0.22); padding: 6px; }
 .function-usecase-list { margin-left: 16px; display: flex; flex-direction: column; gap: 4px; }
 .function-usecase-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: center; }
 .function-usecase-name {

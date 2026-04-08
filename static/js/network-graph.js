@@ -373,16 +373,33 @@ window.addEventListener('load', function () {
     if (!fnFilterList) return;
     fnFilterList.innerHTML = '';
     functionKeys.forEach(fn => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement('details');
       wrapper.className = 'function-filter-group';
+      wrapper.open = true;
+
+      const summary = document.createElement('summary');
+      summary.className = 'function-filter-summary';
+      summary.addEventListener('click', (event) => {
+        if (event.target.closest('input[type="checkbox"]')) {
+          event.preventDefault();
+        }
+      });
+
+      const summaryRow = document.createElement('div');
+      summaryRow.className = 'function-filter-summary-row';
+
+      const caret = document.createElement('span');
+      caret.className = 'function-filter-caret';
+      caret.textContent = '▲';
 
       const labelEl = document.createElement('label');
-      labelEl.className = 'filter-item';
+      labelEl.className = 'filter-item function-filter-label';
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = true;
       checkbox.value = fn;
+      checkbox.addEventListener('click', (event) => event.stopPropagation());
       checkbox.addEventListener('change', () => {
         if (checkbox.checked) visibleFunctions.add(fn);
         else visibleFunctions.delete(fn);
@@ -390,17 +407,28 @@ window.addEventListener('load', function () {
       });
 
       const text = document.createElement('span');
+      text.className = 'function-filter-label-text';
       text.textContent = fn;
+      const count = document.createElement('span');
+      count.className = 'function-usecase-count';
+      count.textContent = `(${(functionToUseCases[fn] || []).length})`;
       const swatch = document.createElement('span');
       swatch.className = 'filter-color-dot';
       swatch.style.backgroundColor = functionColors[fn] || '#94a3b8';
       labelEl.appendChild(checkbox);
       labelEl.appendChild(swatch);
       labelEl.appendChild(text);
-      wrapper.appendChild(labelEl);
+      labelEl.appendChild(count);
+      summaryRow.appendChild(caret);
+      summaryRow.appendChild(labelEl);
+      summary.appendChild(summaryRow);
+      wrapper.appendChild(summary);
 
       const useCaseList = document.createElement('div');
-      useCaseList.className = 'function-usecase-list';
+      useCaseList.className = 'function-filter-body';
+      const useCaseItems = document.createElement('div');
+      useCaseItems.className = 'function-usecase-list';
+      useCaseList.appendChild(useCaseItems);
       (functionToUseCases[fn] || []).forEach(useCaseId => {
         const row = document.createElement('div');
         row.className = 'function-usecase-row';
@@ -468,7 +496,7 @@ window.addEventListener('load', function () {
 
         row.appendChild(nameBtn);
         row.appendChild(statuses);
-        useCaseList.appendChild(row);
+        useCaseItems.appendChild(row);
       });
       wrapper.appendChild(useCaseList);
       fnFilterList.appendChild(wrapper);
