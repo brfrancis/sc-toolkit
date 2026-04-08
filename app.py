@@ -210,6 +210,7 @@ def uci_index():
 
 @app.route('/uci/logo-search')
 def uci_logo_search():
+    request_timeout = 3
     query = (request.args.get('query') or '').strip()
     if not query:
         return jsonify({'results': []})
@@ -234,7 +235,7 @@ def uci_logo_search():
         api_url = f'https://customsearch.googleapis.com/customsearch/v1?{params}'
         try:
             req = Request(api_url, headers={'User-Agent': 'sc-toolkit/1.0 (google-image-search)'})
-            with urlopen(req, timeout=8) as response:
+            with urlopen(req, timeout=request_timeout) as response:
                 payload = json.loads(response.read().decode('utf-8'))
 
             items = payload.get('items', [])
@@ -298,7 +299,7 @@ def uci_logo_search():
                           '(KHTML, like Gecko) Chrome/124.0 Safari/537.36',
             'Accept-Language': 'en-US,en;q=0.9',
         })
-        with urlopen(req, timeout=8) as response:
+        with urlopen(req, timeout=request_timeout) as response:
             page_html = response.read().decode('utf-8', errors='ignore')
     except Exception:
         issues.append('Google Images HTML fallback is unavailable (likely blocked/rate-limited).')
@@ -361,7 +362,7 @@ def uci_logo_search():
     wiki_url = f'https://en.wikipedia.org/w/api.php?{wiki_params}'
     try:
         req = Request(wiki_url, headers={'User-Agent': 'sc-toolkit/1.0 (wikipedia-logo-fallback)'})
-        with urlopen(req, timeout=8) as response:
+        with urlopen(req, timeout=request_timeout) as response:
             payload = json.loads(response.read().decode('utf-8'))
 
         wiki_results = []
