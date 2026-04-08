@@ -232,7 +232,7 @@ def uci_logo_search():
             'imgSize': 'medium',
             'rights': 'cc_publicdomain,cc_attribute',
         })
-        api_url = f'https://customsearch.googleapis.com/customsearch/v1?{params}'
+        api_url = f'https://www.googleapis.com/customsearch/v1?{params}'
         try:
             req = Request(api_url, headers={'User-Agent': 'sc-toolkit/1.0 (google-image-search)'})
             with urlopen(req, timeout=request_timeout) as response:
