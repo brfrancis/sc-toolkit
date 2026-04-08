@@ -472,10 +472,24 @@ html, body { height: 100%; overflow: hidden; }
 
     try {
       const response = await fetch(`/uci/logo-search?query=${encodeURIComponent(query)}`);
-      const payload = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const rawBody = await response.text();
+      let payload = {};
+      if (rawBody && contentType.includes('application/json')) {
+        payload = JSON.parse(rawBody);
+      } else if (rawBody) {
+        try {
+          payload = JSON.parse(rawBody);
+        } catch (_) {
+          payload = {};
+        }
+      }
       if (!response.ok) {
         const issue = payload?.issue || `Logo search failed with status ${response.status}`;
         throw new Error(issue);
+      }
+      if (!contentType.includes('application/json')) {
+        throw new Error('Logo search returned an unexpected server response. Please try again.');
       }
       const candidates = payload?.results || [];
       resultsEl.innerHTML = '';
