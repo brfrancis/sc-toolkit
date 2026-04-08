@@ -329,11 +329,11 @@ html, body { height: 100%; overflow: hidden; }
       <details class="zone" open>
         <summary>Partners / Ecosystem <span class="caret">▲</span></summary>
         <div class="zone-body">
-          <div class="logo-controls">
+          {# <div class="logo-controls">
             <input type="text" class="logo-search-input" placeholder="Search partner logo (e.g. Snowflake)" data-role="search-input" data-zone="partners">
             <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="partners">Search</button>
           </div>
-          <div class="logo-candidates" data-role="candidates" data-zone="partners"></div>
+          <div class="logo-candidates" data-role="candidates" data-zone="partners"></div> #}
         </div>
       </details>
       <div class="zone-logos">
@@ -353,11 +353,11 @@ html, body { height: 100%; overflow: hidden; }
       <details class="zone" open>
         <summary>Data Sources / Systems <span class="caret">▲</span></summary>
         <div class="zone-body">
-          <div class="logo-controls">
+          {# <div class="logo-controls">
             <input type="text" class="logo-search-input" placeholder="Search source logo (e.g. Salesforce)" data-role="search-input" data-zone="sources">
             <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="sources">Search</button>
           </div>
-          <div class="logo-candidates" data-role="candidates" data-zone="sources"></div>
+          <div class="logo-candidates" data-role="candidates" data-zone="sources"></div> #}
         </div>
       </details>
       <div class="zone-logos">
@@ -482,89 +482,89 @@ html, body { height: 100%; overflow: hidden; }
     renderLogos(zone);
   }
 
-  async function searchLogos(zone) {
-    const input = document.querySelector(`[data-role="search-input"][data-zone="${zone}"]`);
-    const resultsEl = document.querySelector(`[data-role="candidates"][data-zone="${zone}"]`);
-    const query = (input?.value || '').trim();
-    if (!query || !resultsEl) return;
-
-    resultsEl.innerHTML = '<span class="logo-hint">Searching web for logos…</span>';
-
-    try {
-      const response = await fetch(`/uci/logo-search?query=${encodeURIComponent(query)}`);
-      const contentType = response.headers.get('content-type') || '';
-      const rawBody = await response.text();
-      let payload = {};
-      if (rawBody && contentType.includes('application/json')) {
-        payload = JSON.parse(rawBody);
-      } else if (rawBody) {
-        try {
-          payload = JSON.parse(rawBody);
-        } catch (_) {
-          payload = {};
-        }
-      }
-      if (!response.ok) {
-        const issue = payload?.issue || `Logo search failed with status ${response.status}`;
-        throw new Error(issue);
-      }
-      if (!contentType.includes('application/json')) {
-        throw new Error('Logo search returned an unexpected server response. Please try again.');
-      }
-      const candidates = payload?.results || [];
-      resultsEl.innerHTML = '';
-
-      candidates.slice(0, 6).forEach((candidate) => {
-        if (!candidate.logo) return;
-
-        const card = document.createElement('div');
-        card.className = 'logo-candidate';
-
-        const img = document.createElement('img');
-        img.className = 'logo-candidate-image';
-        img.src = candidate.logo;
-        img.alt = candidate.name || `${query} logo candidate`;
-        img.loading = 'lazy';
-
-        const name = document.createElement('div');
-        name.className = 'logo-candidate-name';
-        name.textContent = candidate.name || query;
-
-        const actions = document.createElement('div');
-        actions.className = 'logo-candidate-actions';
-
-        const acceptBtn = document.createElement('button');
-        acceptBtn.type = 'button';
-        acceptBtn.className = 'logo-candidate-btn accept';
-        acceptBtn.textContent = 'Accept';
-        acceptBtn.addEventListener('click', () => {
-          addLogo(zone, candidate.full_image || candidate.logo);
-          card.remove();
-        });
-
-        const rejectBtn = document.createElement('button');
-        rejectBtn.type = 'button';
-        rejectBtn.className = 'logo-candidate-btn reject';
-        rejectBtn.textContent = 'Reject';
-        rejectBtn.addEventListener('click', () => card.remove());
-
-        actions.appendChild(acceptBtn);
-        actions.appendChild(rejectBtn);
-        card.appendChild(img);
-        card.appendChild(name);
-        card.appendChild(actions);
-        resultsEl.appendChild(card);
-      });
-
-      if (!resultsEl.children.length) {
-        resultsEl.innerHTML = '<span class="logo-hint">No logo candidates found.</span>';
-      }
-    } catch (err) {
-      const reason = err?.message || 'Unknown issue';
-      resultsEl.innerHTML = `<span class="logo-hint">Search unavailable: ${reason}</span>`;
-      console.error('Logo search failed', err);
-    }
-  }
+  // async function searchLogos(zone) {
+  //   const input = document.querySelector(`[data-role="search-input"][data-zone="${zone}"]`);
+  //   const resultsEl = document.querySelector(`[data-role="candidates"][data-zone="${zone}"]`);
+  //   const query = (input?.value || '').trim();
+  //   if (!query || !resultsEl) return;
+  //
+  //   resultsEl.innerHTML = '<span class="logo-hint">Searching web for logos…</span>';
+  //
+  //   try {
+  //     const response = await fetch(`/uci/logo-search?query=${encodeURIComponent(query)}`);
+  //     const contentType = response.headers.get('content-type') || '';
+  //     const rawBody = await response.text();
+  //     let payload = {};
+  //     if (rawBody && contentType.includes('application/json')) {
+  //       payload = JSON.parse(rawBody);
+  //     } else if (rawBody) {
+  //       try {
+  //         payload = JSON.parse(rawBody);
+  //       } catch (_) {
+  //         payload = {};
+  //       }
+  //     }
+  //     if (!response.ok) {
+  //       const issue = payload?.issue || `Logo search failed with status ${response.status}`;
+  //       throw new Error(issue);
+  //     }
+  //     if (!contentType.includes('application/json')) {
+  //       throw new Error('Logo search returned an unexpected server response. Please try again.');
+  //     }
+  //     const candidates = payload?.results || [];
+  //     resultsEl.innerHTML = '';
+  //
+  //     candidates.slice(0, 6).forEach((candidate) => {
+  //       if (!candidate.logo) return;
+  //
+  //       const card = document.createElement('div');
+  //       card.className = 'logo-candidate';
+  //
+  //       const img = document.createElement('img');
+  //       img.className = 'logo-candidate-image';
+  //       img.src = candidate.logo;
+  //       img.alt = candidate.name || `${query} logo candidate`;
+  //       img.loading = 'lazy';
+  //
+  //       const name = document.createElement('div');
+  //       name.className = 'logo-candidate-name';
+  //       name.textContent = candidate.name || query;
+  //
+  //       const actions = document.createElement('div');
+  //       actions.className = 'logo-candidate-actions';
+  //
+  //       const acceptBtn = document.createElement('button');
+  //       acceptBtn.type = 'button';
+  //       acceptBtn.className = 'logo-candidate-btn accept';
+  //       acceptBtn.textContent = 'Accept';
+  //       acceptBtn.addEventListener('click', () => {
+  //         addLogo(zone, candidate.full_image || candidate.logo);
+  //         card.remove();
+  //       });
+  //
+  //       const rejectBtn = document.createElement('button');
+  //       rejectBtn.type = 'button';
+  //       rejectBtn.className = 'logo-candidate-btn reject';
+  //       rejectBtn.textContent = 'Reject';
+  //       rejectBtn.addEventListener('click', () => card.remove());
+  //
+  //       actions.appendChild(acceptBtn);
+  //       actions.appendChild(rejectBtn);
+  //       card.appendChild(img);
+  //       card.appendChild(name);
+  //       card.appendChild(actions);
+  //       resultsEl.appendChild(card);
+  //     });
+  //
+  //     if (!resultsEl.children.length) {
+  //       resultsEl.innerHTML = '<span class="logo-hint">No logo candidates found.</span>';
+  //     }
+  //   } catch (err) {
+  //     const reason = err?.message || 'Unknown issue';
+  //     resultsEl.innerHTML = `<span class="logo-hint">Search unavailable: ${reason}</span>`;
+  //     console.error('Logo search failed', err);
+  //   }
+  // }
 
   function setupDropzone(zone) {
     const dropzone = document.querySelector(`[data-role="dropzone"][data-zone="${zone}"]`);
@@ -591,18 +591,18 @@ html, body { height: 100%; overflow: hidden; }
     });
   }
 
-  document.querySelectorAll('[data-role="search-btn"]').forEach((button) => {
-    button.addEventListener('click', () => searchLogos(button.dataset.zone));
-  });
-
-  document.querySelectorAll('[data-role="search-input"]').forEach((input) => {
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        searchLogos(input.dataset.zone);
-      }
-    });
-  });
+  // document.querySelectorAll('[data-role="search-btn"]').forEach((button) => {
+  //   button.addEventListener('click', () => searchLogos(button.dataset.zone));
+  // });
+  //
+  // document.querySelectorAll('[data-role="search-input"]').forEach((input) => {
+  //   input.addEventListener('keydown', (event) => {
+  //     if (event.key === 'Enter') {
+  //       event.preventDefault();
+  //       searchLogos(input.dataset.zone);
+  //     }
+  //   });
+  // });
 
   setupDropzone('partners');
   setupDropzone('sources');
