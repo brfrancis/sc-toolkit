@@ -196,6 +196,49 @@ html, body { height: 100%; overflow: hidden; }
   padding: 6px 10px;
   font-size: 12px;
   font-weight: 500;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.summary-info-tip {
+  margin-left: auto;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 13px;
+  text-align: center;
+  font-weight: 700;
+  cursor: help;
+  position: relative;
+}
+.summary-info-tip .tip-content {
+  position: absolute;
+  right: 0;
+  top: 20px;
+  width: min(350px, 70vw);
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+  color: var(--text);
+  font-weight: 400;
+  font-size: 11px;
+  white-space: pre-line;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 50;
+}
+.summary-info-tip:hover .tip-content {
+  opacity: 1;
+  transform: translateY(0);
 }
 .filter-list {
   max-height: 180px;
@@ -253,10 +296,14 @@ html, body { height: 100%; overflow: hidden; }
 .function-usecase-status { display: inline-flex; align-items: center; gap: 2px; cursor: pointer; }
 .function-usecase-status input { margin: 0; width: 12px; height: 12px; accent-color: #64748b; }
 .function-usecase-status .status-marker { font-size: 10px; line-height: 1; }
-.function-usecase-status.status-implemented input { accent-color: #16a34a; }
-.function-usecase-status.status-implemented .status-marker { color: #16a34a; }
-.function-usecase-status.status-vetoed input { accent-color: #dc2626; }
-.function-usecase-status.status-vetoed .status-marker { color: #dc2626; }
+.function-usecase-status.status-manual input { accent-color: #dc2626; }
+.function-usecase-status.status-manual .status-marker { color: #dc2626; }
+.function-usecase-status.status-digitised input { accent-color: #f59e0b; }
+.function-usecase-status.status-digitised .status-marker { color: #f59e0b; }
+.function-usecase-status.status-structured input { accent-color: #65a30d; }
+.function-usecase-status.status-structured .status-marker { color: #65a30d; }
+.function-usecase-status.status-ai-assisted input { accent-color: #16a34a; }
+.function-usecase-status.status-ai-assisted .status-marker { color: #16a34a; }
 .status-filter-count { margin-left: auto; color: var(--text-muted); font-size: 11px; }
 .filter-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(15, 23, 42, 0.2); }
 .ctrl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
@@ -355,7 +402,7 @@ html, body { height: 100%; overflow: hidden; }
       <div class="graph-info" id="graph-info">Loading...</div>
     </div>
 
-    <div class="zone-shell">
+    {# <div class="zone-shell">
       <details class="zone" open>
         <summary>Data Sources / Systems <span class="caret">▲</span></summary>
         <div class="zone-body">
@@ -371,7 +418,7 @@ html, body { height: 100%; overflow: hidden; }
           <span class="logo-hint">Drop an image here or choose a search result.</span>
         </div>
       </div>
-    </div>
+    </div> #}
   </div>
 
   <div class="side-pane" id="side-pane">
@@ -400,7 +447,22 @@ html, body { height: 100%; overflow: hidden; }
         <div>
           <div class="ctrl-label">Filter by status</div>
           <details class="filter-panel" open>
-            <summary>Show/hide statuses</summary>
+            <summary>
+              Show/hide statuses
+              <span class="summary-info-tip" aria-label="Status guidance" tabindex="0">i
+                <span class="tip-content">Manual - Human reads, interprets, decides. No structured data. No automation
+Example: Manual read of submission emails
+
+Digitised - Data is available but still manual effort with basic tools (Excel, dashboards)
+Example: Data copied into spreadsheets, basic reporting
+
+Structured Intelligence - Automation of data being extracted / structured
+Example: Submission data extracted into structured format -> Human still decides
+
+Assisted Decisioning - AI provides recommended decision / scoring
+Example: Risk scoring, triage suggestions, fraud alerts -> Human or Guard-railed AI approves</span>
+              </span>
+            </summary>
             <div id="status-filter-list" class="filter-list"></div>
           </details>
         </div>
