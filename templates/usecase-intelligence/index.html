@@ -518,7 +518,7 @@ Example: Risk scoring, triage suggestions, fraud alerts -> Human or Guard-railed
 <script src="/static/js/network-graph.js"></script>
 <script>
 (function () {
-  const state = { partners: [], sources: [] };
+  const state = { partners: [] };
 
   function renderLogos(zone) {
     const dropzone = document.querySelector(`[data-role="dropzone"][data-zone="${zone}"]`);
@@ -673,9 +673,7 @@ Example: Risk scoring, triage suggestions, fraud alerts -> Human or Guard-railed
   // });
 
   setupDropzone('partners');
-  setupDropzone('sources');
   renderLogos('partners');
-  renderLogos('sources');
 })();
 </script>
 {% endblock %}
