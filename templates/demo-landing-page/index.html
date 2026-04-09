@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Interactive Demos · sc-toolkit{% endblock %}
-{% block content %}
+{% block body_override %}
+<main class="main main-demo">
 <section class="tabbed-demo" aria-label="Interactive demo examples">
   <div class="tab-list" role="tablist" aria-label="Demo tabs">
     <button id="tab-sas" class="tab-button is-active" type="button" role="tab" aria-selected="true" aria-controls="panel-sas" data-tab="sas">SAS</button>
@@ -26,6 +27,7 @@
     </div>
   </div>
 </section>
+</main>
 {% endblock %}
 
 {% block scripts %}
