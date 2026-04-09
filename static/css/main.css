@@ -259,6 +259,72 @@ body {
   padding: 12px;
 }
 
+/* CDR execution UI */
+.cdr-exec-form {
+  margin-bottom: 24px;
+}
+
+.cdr-exec-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.cdr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cdr-field label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cdr-field select,
+.cdr-field input[type="text"] {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.cdr-field-cluster {
+  min-width: 220px;
+}
+
+.cdr-field-submission {
+  min-width: 280px;
+  flex: 1;
+}
+
+.cdr-output-wrap h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.cdr-output {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  max-height: 65vh;
+  overflow: auto;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .tab-panel .jmp-live-iframe {
   width: 100%;
   min-height: calc(100vh - 220px);
