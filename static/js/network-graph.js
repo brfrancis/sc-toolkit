@@ -103,20 +103,22 @@ window.addEventListener('load', function () {
       .map(node => node.id)
       .sort((a, b) => a.localeCompare(b));
   });
-  const implementedIds = new Set();
-  const vetoIds = new Set();
-  const implementedConnections = new Set();
-  const visibleStatuses = new Set(['implemented', 'adjacent', 'vetoed', 'none']);
+  const STATUS_CONFIG = {
+    manual: { label: 'Manual', color: '#dc2626' },
+    digitised: { label: 'Digitised', color: '#f59e0b' },
+    structured: { label: 'Structured Intelligence', color: '#65a30d' },
+    ai_assisted: { label: 'AI Assisted Decisioning', color: '#16a34a' },
+  };
+  const STATUS_KEYS = ['manual', 'digitised', 'structured', 'ai_assisted'];
+  const useCaseStatuses = new Map(allNodes.map(node => [node.id, 'manual']));
+  const visibleStatuses = new Set(STATUS_KEYS);
   let statusFilterCountEls = {};
   let selectedNode = null;
 
   let searchTerm   = '';
 
   function nodeStatus(d) {
-    if (vetoIds.has(d.id)) return 'vetoed';
-    if (implementedIds.has(d.id)) return 'implemented';
-    if (implementedConnections.has(d.id)) return 'adjacent';
-    return 'none';
+    return useCaseStatuses.get(d.id) || 'manual';
   }
 
   function statusVisible(d) {
@@ -137,19 +139,14 @@ window.addEventListener('load', function () {
   }
 
   function nodeStroke(d) {
-    if (vetoIds.has(d.id)) return '#dc2626';
     if (selectedNode === d) return '#1a1a1a';
-    if (implementedIds.has(d.id)) return '#16a34a';
-    if (implementedConnections.has(d.id)) return '#f59e0b';
-    return '#fff';
+    const status = nodeStatus(d);
+    return STATUS_CONFIG[status]?.color || '#fff';
   }
 
   function nodeStrokeWidth(d) {
-    if (vetoIds.has(d.id)) return 2.4;
     if (selectedNode === d) return 2.5;
-    if (implementedIds.has(d.id)) return 2.2;
-    if (implementedConnections.has(d.id)) return 1.8;
-    return 1;
+    return 2;
   }
 
   function edgeOpacity(d) {
@@ -286,7 +283,7 @@ window.addEventListener('load', function () {
   }
 
   function statusCounts() {
-    const counts = { implemented: 0, adjacent: 0, vetoed: 0, none: 0 };
+    const counts = { manual: 0, digitised: 0, structured: 0, ai_assisted: 0 };
     allNodes.forEach(n => {
       const status = nodeStatus(n);
       if (counts[status] !== undefined) counts[status] += 1;
@@ -326,47 +323,6 @@ window.addEventListener('load', function () {
     refresh();
     setDetailOpen(false);
     detail.innerHTML = '<div class="nd-empty">Click a node to inspect it.</div>';
-  }
-
-  function normaliseId(value) {
-    return (value || '').trim().toLowerCase();
-  }
-
-  function updateImplementedHighlights(rawImplemented) {
-    implementedIds.clear();
-    implementedConnections.clear();
-
-    const byNormalisedId = {};
-    allNodes.forEach(n => { byNormalisedId[normaliseId(n.id)] = n.id; });
-
-    rawImplemented.forEach(name => {
-      const exact = byNormalisedId[normaliseId(name)];
-      if (exact) implementedIds.add(exact);
-    });
-
-    allEdges.forEach(e => {
-      const src = e.source.id || e.source;
-      const tgt = e.target.id || e.target;
-      if (implementedIds.has(src) && !implementedIds.has(tgt)) implementedConnections.add(tgt);
-      if (implementedIds.has(tgt) && !implementedIds.has(src)) implementedConnections.add(src);
-    });
-
-    syncUseCaseStatusCheckboxes();
-    refresh();
-  }
-
-  function updateVetoHighlights(rawVeto) {
-    vetoIds.clear();
-    const byNormalisedId = {};
-    allNodes.forEach(n => { byNormalisedId[normaliseId(n.id)] = n.id; });
-
-    rawVeto.forEach(name => {
-      const exact = byNormalisedId[normaliseId(name)];
-      if (exact) vetoIds.add(exact);
-    });
-
-    syncUseCaseStatusCheckboxes();
-    refresh();
   }
 
   function renderFunctionFilters() {
@@ -450,9 +406,10 @@ window.addEventListener('load', function () {
         const statuses = document.createElement('div');
         statuses.className = 'function-usecase-statuses';
         const statusOptions = [
-          { key: 'none', label: 'No status', colorClass: 'status-none' },
-          { key: 'implemented', label: 'Already implemented', colorClass: 'status-implemented' },
-          { key: 'vetoed', label: 'Vetoed', colorClass: 'status-vetoed' },
+          { key: 'manual', label: 'Manual', colorClass: 'status-manual' },
+          { key: 'digitised', label: 'Digitised', colorClass: 'status-digitised' },
+          { key: 'structured', label: 'Structured Intelligence', colorClass: 'status-structured' },
+          { key: 'ai_assisted', label: 'AI Assisted Decisioning', colorClass: 'status-ai-assisted' },
         ];
 
         statusOptions.forEach((option) => {
@@ -465,30 +422,18 @@ window.addEventListener('load', function () {
           statusCheckbox.dataset.useCaseId = useCaseId;
           statusCheckbox.dataset.status = option.key;
           statusCheckbox.addEventListener('change', () => {
-            const isChecked = statusCheckbox.checked;
             row.querySelectorAll('input[type="checkbox"]').forEach((box) => {
               box.checked = false;
             });
-
-            if (!isChecked || option.key === 'none') {
-              vetoIds.delete(useCaseId);
-              implementedIds.delete(useCaseId);
-            } else if (option.key === 'implemented') {
-              implementedIds.add(useCaseId);
-              vetoIds.delete(useCaseId);
-            } else if (option.key === 'vetoed') {
-              vetoIds.add(useCaseId);
-              implementedIds.delete(useCaseId);
-            }
+            useCaseStatuses.set(useCaseId, option.key);
 
             syncUseCaseStatusCheckboxes();
-            updateAdjacentFromImplemented();
             refresh();
           });
 
           const marker = document.createElement('span');
           marker.className = 'status-marker';
-          marker.textContent = option.key === 'none' ? '○' : '●';
+          marker.textContent = '●';
           statusLabel.appendChild(statusCheckbox);
           statusLabel.appendChild(marker);
           statuses.appendChild(statusLabel);
@@ -508,10 +453,10 @@ window.addEventListener('load', function () {
   function renderStatusFilters() {
     if (!statusFilterList) return;
     const statusOptions = [
-      { key: 'implemented', label: 'Already implemented' },
-      { key: 'adjacent', label: 'Adjacent' },
-      { key: 'vetoed', label: 'Vetoed' },
-      { key: 'none', label: 'No status' },
+      { key: 'manual', label: 'Manual', formula: 'Count of use cases manually handled end-to-end' },
+      { key: 'digitised', label: 'Digitised', formula: 'Count of use cases with digitised data but manual decisions' },
+      { key: 'structured', label: 'Structured Intelligence', formula: 'Count of use cases with automated extraction/structuring and human decisions' },
+      { key: 'ai_assisted', label: 'AI Assisted Decisioning', formula: 'Count of use cases where AI assists decision recommendations/scoring' },
     ];
 
     statusFilterList.innerHTML = '';
@@ -531,16 +476,12 @@ window.addEventListener('load', function () {
       });
 
       const text = document.createElement('span');
-      text.textContent = option.label;
+      text.textContent = `${option.label} (${option.formula})`;
       labelEl.appendChild(checkbox);
-      if (option.key !== 'none') {
-        const swatch = document.createElement('span');
-        swatch.className = 'filter-color-dot';
-        if (option.key === 'implemented') swatch.style.backgroundColor = '#16a34a';
-        if (option.key === 'adjacent') swatch.style.backgroundColor = '#f59e0b';
-        if (option.key === 'vetoed') swatch.style.backgroundColor = '#dc2626';
-        labelEl.appendChild(swatch);
-      }
+      const swatch = document.createElement('span');
+      swatch.className = 'filter-color-dot';
+      swatch.style.backgroundColor = STATUS_CONFIG[option.key]?.color || '#94a3b8';
+      labelEl.appendChild(swatch);
       labelEl.appendChild(text);
       const count = document.createElement('span');
       count.className = 'status-filter-count';
@@ -552,25 +493,12 @@ window.addEventListener('load', function () {
     updateStatusCounts();
   }
 
-  function updateAdjacentFromImplemented() {
-    implementedConnections.clear();
-    allEdges.forEach(e => {
-      const src = e.source.id || e.source;
-      const tgt = e.target.id || e.target;
-      if (implementedIds.has(src) && !implementedIds.has(tgt)) implementedConnections.add(tgt);
-      if (implementedIds.has(tgt) && !implementedIds.has(src)) implementedConnections.add(src);
-    });
-  }
-
   function syncUseCaseStatusCheckboxes() {
     if (!fnFilterList) return;
     fnFilterList.querySelectorAll('.function-usecase-row').forEach(row => {
       const useCaseId = row.querySelector('input[type="checkbox"]')?.dataset.useCaseId;
       if (!useCaseId) return;
-
-      let activeStatus = 'none';
-      if (vetoIds.has(useCaseId)) activeStatus = 'vetoed';
-      else if (implementedIds.has(useCaseId)) activeStatus = 'implemented';
+      const activeStatus = useCaseStatuses.get(useCaseId) || 'manual';
 
       row.querySelectorAll('input[type="checkbox"]').forEach((box) => {
         box.checked = box.dataset.status === activeStatus;
@@ -668,12 +596,6 @@ window.addEventListener('load', function () {
     svg.attr('width', width).attr('height', height);
     functionCenters = computeFunctionCenters();
     sim.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.1).restart();
-  });
-
-  document.addEventListener('tag-input-change', e => {
-    if (!e.detail || !e.detail.listId) return;
-    if (e.detail.listId === 'implemented-list') updateImplementedHighlights(e.detail.tags || []);
-    if (e.detail.listId === 'veto-list') updateVetoHighlights(e.detail.tags || []);
   });
 
   renderFunctionFilters();
