@@ -9,6 +9,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import re
 import html
+import traceback
 
 app = Flask(__name__)
 
@@ -75,38 +76,31 @@ def demo_generate():
 # ── CDR data warehouse ─────────────────────────────────────────────────────
 @app.route('/cdr')
 def cdr_index():
-    return render_template('cdr-data-warehouse/index.html', active='cdr')
+    return render_template(
+        'cdr-data-warehouse/index.html',
+        active='cdr',
+        selected_cluster='try.indico.io',
+        submission_id='',
+        execution_output='',
+    )
 
 
 @app.route('/cdr/process', methods=['POST'])
 def cdr_process():
-    from cdr_data_warehouse.pipeline import load_bronze, bronze_to_silver, silver_to_gold
-    json_input   = request.form.get('json_input', '{}')
-    threshold    = float(request.form.get('confidence_threshold', 0.75))
-    submission_id = request.form.get('submission_id', 'SUB-001')
-
+    from cdr_data_warehouse.duckdb_demo import run_demo
+    selected_cluster = request.form.get('cluster', 'try.indico.io').strip() or 'try.indico.io'
+    submission_id = request.form.get('submission_id', '').strip()
     try:
-        data   = json.loads(json_input)
-        bronze = load_bronze(data)
-        silver = bronze_to_silver(bronze, confidence_threshold=threshold)
-        gold   = silver_to_gold(silver)
-    except NotImplementedError:
-        bronze = []
-        silver = []
-        gold   = {"status": "Pipeline in development"}
+        execution_output = run_demo()
     except Exception as e:
-        bronze = []
-        silver = []
-        gold   = {"error": str(e)}
+        execution_output = f"Execution failed: {e}\n\n{traceback.format_exc()}"
 
     return render_template(
-        'cdr-data-warehouse/result.html',
+        'cdr-data-warehouse/index.html',
         active='cdr',
+        selected_cluster=selected_cluster,
         submission_id=submission_id,
-        bronze=bronze.to_dict('records') if hasattr(bronze, 'to_dict') else bronze,
-        silver=silver,
-        gold=gold,
-        threshold=threshold,
+        execution_output=execution_output,
     )
 
 
