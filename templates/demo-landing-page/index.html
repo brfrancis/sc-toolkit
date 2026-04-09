@@ -1,28 +1,71 @@
 {% extends "base.html" %}
-{% block title %}sc-toolkit{% endblock %}
+{% block title %}Interactive Demos · sc-toolkit{% endblock %}
 {% block content %}
-<div class="hero">
-  <h1>sc-toolkit</h1>
-  <p class="hero-sub">Python tools for Solutions Consulting in insurance AI — built from live engagements in the London Market.</p>
-</div>
+<section class="tabbed-demo" aria-label="Interactive demo examples">
+  <div class="tab-list" role="tablist" aria-label="Demo tabs">
+    <button id="tab-sas" class="tab-button is-active" type="button" role="tab" aria-selected="true" aria-controls="panel-sas" data-tab="sas">SAS</button>
+    <button id="tab-alteryx" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-alteryx" data-tab="alteryx" tabindex="-1">Alteryx</button>
+    <button id="tab-indico-data" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-indico-data" data-tab="indico-data" tabindex="-1">Indico Data</button>
+  </div>
 
-<div class="tool-grid">
-  <a class="tool-card" href="/demo">
-    <h2>Demo landing page</h2>
-    <p>Generate a client-specific HTML landing page for a demo session — scoped to use case, key fields, and stakeholder focus.</p>
-    <span class="tag">Flask · Jinja2</span>
-  </a>
+  <div id="panel-sas" class="tab-panel is-active" role="tabpanel" aria-labelledby="tab-sas" data-panel="sas">
+    <iframe class="jmp-live-iframe" width="800" height="600" src="https://public.jmp.com/packages/WTKl460C67BhPLRHnt5LG-5/embed" aria-label="JMP Report" style="margin: 0.8em 0px;"></iframe>
+  </div>
 
-  <a class="tool-card" href="/cdr">
-    <h2>CDR data warehouse</h2>
-    <p>Transform Indico JSON extraction output (bronze) into CDR v3.2-aligned silver and gold datasets.</p>
-    <span class="tag">pandas · CDR v3.2</span>
-  </a>
+  <div id="panel-alteryx" class="tab-panel" role="tabpanel" aria-labelledby="tab-alteryx" data-panel="alteryx" hidden>
+    <div class="tab-placeholder">
+      <h2>Alteryx example coming soon</h2>
+      <p>Add a full-screen Alteryx embed here when available.</p>
+    </div>
+  </div>
 
-  <a class="tool-card" href="/uci">
-    <h2>Use case intelligence</h2>
-    <p>Map customer workflow descriptions to a structured taxonomy via fine-tuned LLM, then recommend next steps via an adjacency network.</p>
-    <span class="tag">OpenAI · network graph</span>
-  </a>
-</div>
+  <div id="panel-indico-data" class="tab-panel" role="tabpanel" aria-labelledby="tab-indico-data" data-panel="indico-data" hidden>
+    <div class="tab-placeholder">
+      <h2>Indico Data example coming soon</h2>
+      <p>Add a full-screen Indico Data embed here when available.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (() => {
+    const tabButtons = Array.from(document.querySelectorAll('.tab-button'));
+    const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+
+    function activateTab(targetTab) {
+      tabButtons.forEach((button) => {
+        const isActive = button.dataset.tab === targetTab;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-selected', String(isActive));
+        button.tabIndex = isActive ? 0 : -1;
+      });
+
+      tabPanels.forEach((panel) => {
+        const isActive = panel.dataset.panel === targetTab;
+        panel.classList.toggle('is-active', isActive);
+        panel.hidden = !isActive;
+      });
+    }
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => activateTab(button.dataset.tab));
+      button.addEventListener('keydown', (event) => {
+        const currentIndex = tabButtons.indexOf(button);
+        if (event.key === 'ArrowRight') {
+          const nextIndex = (currentIndex + 1) % tabButtons.length;
+          tabButtons[nextIndex].focus();
+          activateTab(tabButtons[nextIndex].dataset.tab);
+          event.preventDefault();
+        } else if (event.key === 'ArrowLeft') {
+          const previousIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+          tabButtons[previousIndex].focus();
+          activateTab(tabButtons[previousIndex].dataset.tab);
+          event.preventDefault();
+        }
+      });
+    });
+  })();
+</script>
 {% endblock %}
