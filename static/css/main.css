@@ -55,6 +55,7 @@ body {
 
 /* Main */
 .main { max-width: 900px; margin: 0 auto; padding: 48px 32px; }
+.main.main-demo { max-width: none; }
 
 /* Hero */
 .hero { margin-bottom: 48px; }
