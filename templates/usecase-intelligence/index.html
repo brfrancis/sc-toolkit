@@ -402,7 +402,23 @@ html, body { height: 100%; overflow: hidden; }
       <div class="graph-info" id="graph-info">Loading...</div>
     </div>
 
-    {# Data Sources / Systems section intentionally hidden per UX request. #}
+    {# <div class="zone-shell">
+      <details class="zone" open>
+        <summary>Data Sources / Systems <span class="caret">▲</span></summary>
+        <div class="zone-body">
+          {# <div class="logo-controls">
+            <input type="text" class="logo-search-input" placeholder="Search source logo (e.g. Salesforce)" data-role="search-input" data-zone="sources">
+            <button type="button" class="btn-secondary logo-search-btn" data-role="search-btn" data-zone="sources">Search</button>
+          </div>
+          <div class="logo-candidates" data-role="candidates" data-zone="sources"></div> #}
+        </div>
+      </details>
+      <div class="zone-logos">
+        <div class="logo-dropzone" data-role="dropzone" data-zone="sources">
+          <span class="logo-hint">Drop an image here or choose a search result.</span>
+        </div>
+      </div>
+    </div> #}
   </div>
 
   <div class="side-pane" id="side-pane">
