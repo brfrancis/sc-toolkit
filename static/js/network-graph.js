@@ -453,10 +453,10 @@ window.addEventListener('load', function () {
   function renderStatusFilters() {
     if (!statusFilterList) return;
     const statusOptions = [
-      { key: 'manual', label: 'Manual', formula: 'Count of use cases manually handled end-to-end' },
-      { key: 'digitised', label: 'Digitised', formula: 'Count of use cases with digitised data but manual decisions' },
-      { key: 'structured', label: 'Structured Intelligence', formula: 'Count of use cases with automated extraction/structuring and human decisions' },
-      { key: 'ai_assisted', label: 'AI Assisted Decisioning', formula: 'Count of use cases where AI assists decision recommendations/scoring' },
+      { key: 'manual', label: 'Manual', formula: '' },
+      { key: 'digitised', label: 'Digitised', formula: '' },
+      { key: 'structured', label: 'Structured Intelligence', formula: '' },
+      { key: 'ai_assisted', label: 'AI Assisted Decisioning', formula: '' },
     ];
 
     statusFilterList.innerHTML = '';
@@ -476,7 +476,7 @@ window.addEventListener('load', function () {
       });
 
       const text = document.createElement('span');
-      text.textContent = `${option.label} (${option.formula})`;
+      text.textContent = `${option.label}`;
       labelEl.appendChild(checkbox);
       const swatch = document.createElement('span');
       swatch.className = 'filter-color-dot';
