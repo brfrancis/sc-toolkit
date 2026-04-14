@@ -7,6 +7,7 @@ import os
 from demo_landing_page.routes import demo_bp
 from cdr_data_warehouse.routes import cdr_bp
 from usecase_intelligence.routes import uci_bp
+from workflow_builder.routes import workflow_bp
 
 
 def create_app():
@@ -34,6 +35,7 @@ def create_app():
     app.register_blueprint(demo_bp)
     app.register_blueprint(cdr_bp)
     app.register_blueprint(uci_bp)
+    app.register_blueprint(workflow_bp)
 
     return app
 

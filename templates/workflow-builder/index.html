@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Workflow Builder{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Workflow Builder</h1>
+  <p>Run a GraphQL request through <code>get_version()</code> and display the result.</p>
+</div>
+
+<form class="cdr-exec-form" action="/workflow-builder/version" method="post">
+  <div class="cdr-exec-row">
+    <div class="cdr-field cdr-field-cluster">
+      <label for="cluster">Cluster</label>
+      <select id="cluster" name="cluster">
+        <option value="try.indico.io" {% if selected_cluster == 'try.indico.io' %}selected{% endif %}>try.indico.io</option>
+      </select>
+    </div>
+
+    <div class="cdr-field cdr-field-btn">
+      <label>&nbsp;</label>
+      <button type="submit" class="btn-primary">Get Version</button>
+    </div>
+  </div>
+</form>
+
+<div class="cdr-output-wrap">
+  <h2>get_version() Output</h2>
+  {% if error_message %}
+  <pre class="cdr-output">Execution failed: {{ error_message }}</pre>
+  {% elif version_result %}
+  <pre class="cdr-output">{{ version_result }}</pre>
+  {% else %}
+  <pre class="cdr-output">Run Get Version to display GraphQL output here.</pre>
+  {% endif %}
+</div>
+{% endblock %}
