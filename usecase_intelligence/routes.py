@@ -18,6 +18,10 @@ def uci_index():
 
     use_case_suffix = '_use_cases.csv'
     relationship_suffixes = ('_use_case_relationships.csv', '_relationships.csv')
+    dataset_labels = {
+        'Analytics': 'Enterprise Analytics & Automation',
+        'Insurance_Ops': 'Insurance Operations & Decisioning',
+    }
     dataset_sources = {}
 
     for filename in os.listdir(data_dir):
@@ -43,7 +47,7 @@ def uci_index():
             continue
         dataset_options.append({
             'prefix': prefix,
-            'label': prefix.replace('_', ' ').strip(),
+            'label': dataset_labels.get(prefix, prefix.replace('_', ' ').strip()),
             'use_cases_path': paths['use_cases_path'],
             'relationships_path': paths['relationships_path'],
         })
@@ -64,7 +68,7 @@ def uci_index():
     requested_dataset = (request.args.get('dataset') or '').strip()
     selected_option = next((d for d in dataset_options if d['prefix'] == requested_dataset), None)
     if not selected_option:
-        selected_option = next((d for d in dataset_options if d['prefix'] == 'Alteryx'), dataset_options[0])
+        selected_option = next((d for d in dataset_options if d['prefix'] == 'Analytics'), dataset_options[0])
 
     nodes = []
     seen_node_ids = set()
