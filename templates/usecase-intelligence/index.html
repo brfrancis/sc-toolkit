@@ -186,6 +186,16 @@ html, body { height: 100%; overflow: hidden; }
   padding: 6px 10px; font-size: 13px; border: 1px solid var(--border);
   border-radius: var(--radius); background: var(--bg); color: var(--text); width: 100%;
 }
+.demo-mode-card { border: 1px solid var(--accent); border-radius: var(--radius); padding: 12px; background: color-mix(in srgb, var(--accent) 7%, var(--bg)); }
+.demo-mode-card h3 { font-size: 13px; margin-bottom: 4px; }
+.demo-mode-card p { color: var(--text-muted); font-size: 11px; line-height: 1.45; margin-bottom: 9px; }
+.demo-mode-button { width: 100%; }
+.demo-mode-button.is-active { background: #166534; }
+.demo-mode-results { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
+.demo-mode-results p { color: var(--text); margin-bottom: 7px; }
+.demo-mode-links { display: flex; flex-direction: column; gap: 5px; }
+.demo-mode-links a { font-size: 12px; font-weight: 600; color: var(--accent); }
+.demo-highlight { filter: drop-shadow(0 0 5px #f59e0b); }
 .filter-panel {
   width: 100%;
   border: 1px solid var(--border);
@@ -413,6 +423,20 @@ html, body { height: 100%; overflow: hidden; }
     <button class="side-toggle" id="side-toggle" aria-expanded="true" aria-controls="side-pane-content">⟩</button>
     <div class="side-pane-content" id="side-pane-content">
       <div class="pane-controls">
+        {% if demo_scenario %}
+        <section class="demo-mode-card" aria-labelledby="demo-mode-title">
+          <h3 id="demo-mode-title">Customer call demo</h3>
+          <p>Replay a discovery call and highlight the use cases the customer says are currently digitised.</p>
+          <button type="button" class="btn-primary demo-mode-button" id="demo-mode-button" aria-pressed="false">Start demo mode</button>
+          <div class="demo-mode-results" id="demo-mode-results" hidden aria-live="polite">
+            <p><strong>{{ demo_scenario.digitised_use_cases|length }} use cases highlighted</strong> from the call with {{ demo_scenario.customer }}.</p>
+            <div class="demo-mode-links">
+              <a href="{{ url_for('uci_bp.uci_demo_document', document_type='transcript', dataset=selected_dataset) }}">Read the call transcript →</a>
+              <a href="{{ url_for('uci_bp.uci_demo_document', document_type='report', dataset=selected_dataset) }}">View adjacent use case report →</a>
+            </div>
+          </div>
+        </section>
+        {% endif %}
         <div>
           <div class="ctrl-label">Use case set</div>
           <select id="dataset-select">
@@ -501,6 +525,7 @@ Example: Risk scoring, triage suggestions, fraud alerts -> Human or Guard-railed
 {% block scripts %}
 <script>const GRAPH_DATA = {{ graph_json | safe }};</script>
 <script>const SELECTED_DATASET = {{ selected_dataset | tojson }};</script>
+<script>const DEMO_SCENARIO = {{ demo_scenario | tojson }};</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="/static/js/tag-input.js"></script>
 <script src="/static/js/network-graph.js"></script>

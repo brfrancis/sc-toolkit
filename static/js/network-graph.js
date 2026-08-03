@@ -11,6 +11,8 @@ window.addEventListener('load', function () {
   const sideToggle = document.getElementById('side-toggle');
   const detailPane = document.getElementById('node-inspector-pane');
   const detailToggle = document.getElementById('detail-toggle');
+  const demoModeButton = document.getElementById('demo-mode-button');
+  const demoModeResults = document.getElementById('demo-mode-results');
 
   if (!svgEl || typeof GRAPH_DATA === 'undefined' || typeof d3 === 'undefined') {
     if (info) info.textContent = 'Graph failed to initialise — check console.';
@@ -147,6 +149,17 @@ window.addEventListener('load', function () {
   function nodeStrokeWidth(d) {
     if (selectedNode === d) return 2.5;
     return 2;
+  }
+
+  function setDemoHighlights(useCaseIds) {
+    const highlighted = new Set(useCaseIds);
+    allNodes.forEach(useCase => {
+      useCaseStatuses.set(useCase.id, highlighted.has(useCase.id) ? 'digitised' : 'manual');
+    });
+    visibleStatuses.add('digitised');
+    node.classed('demo-highlight', d => highlighted.has(d.id));
+    syncUseCaseStatusCheckboxes();
+    refresh();
   }
 
   function edgeOpacity(d) {
@@ -558,6 +571,29 @@ window.addEventListener('load', function () {
       if (selectedDataset) url.searchParams.set('dataset', selectedDataset);
       if (typeof SELECTED_DATASET !== 'undefined' && selectedDataset === SELECTED_DATASET) return;
       window.location.assign(url.toString());
+    });
+  }
+
+  if (demoModeButton && typeof DEMO_SCENARIO !== 'undefined' && DEMO_SCENARIO) {
+    demoModeButton.addEventListener('click', () => {
+      const active = demoModeButton.getAttribute('aria-pressed') === 'true';
+      if (active) {
+        setDemoHighlights([]);
+        demoModeButton.setAttribute('aria-pressed', 'false');
+        demoModeButton.classList.remove('is-active');
+        demoModeButton.textContent = 'Start demo mode';
+        if (demoModeResults) demoModeResults.hidden = true;
+        info.textContent = `${allNodes.length} use cases · ${allEdges.length} relationships · drag to pan · scroll to zoom · click a node`;
+        return;
+      }
+
+      const demoUseCases = (DEMO_SCENARIO.digitised_use_cases || []).filter(id => nodeById[id]);
+      setDemoHighlights(demoUseCases);
+      demoModeButton.setAttribute('aria-pressed', 'true');
+      demoModeButton.classList.add('is-active');
+      demoModeButton.textContent = 'Exit demo mode';
+      if (demoModeResults) demoModeResults.hidden = false;
+      info.textContent = `Demo mode · ${demoUseCases.length} customer use cases highlighted as digitised`;
     });
   }
 
