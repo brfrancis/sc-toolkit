@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% set is_transcript = document_type == 'transcript' %}
+{% block title %}{{ 'Discovery call transcript' if is_transcript else 'Adjacent use case report' }}{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <a href="{{ url_for('uci_bp.uci_index', dataset=dataset) }}">← Back to use case network</a>
+  <h1>{{ 'Discovery call transcript' if is_transcript else 'Recommended adjacent use cases' }}</h1>
+  <p>{{ scenario.customer }} · {{ scenario.call_date }} · Demo content</p>
+</header>
+
+{% if is_transcript %}
+<section aria-label="Call transcript">
+  {% for speaker, words in scenario.transcript %}
+  <div class="classification-card">
+    <strong>{{ speaker }}</strong>
+    <p>{{ words }}</p>
+  </div>
+  {% endfor %}
+</section>
+{% else %}
+<section>
+  <div class="classification-card">
+    <h2>Starting point</h2>
+    <p>The customer identified these use cases as currently digitised:</p>
+    <ul class="field-list">
+      {% for use_case in scenario.digitised_use_cases %}<li>{{ use_case }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% for recommendation in scenario.adjacent_use_cases %}
+  <article class="classification-card">
+    <h2>{{ loop.index }}. {{ recommendation.name }}</h2>
+    <p><strong>Why this is adjacent:</strong> {{ recommendation.why }}</p>
+  </article>
+  {% endfor %}
+  <p class="hint">These illustrative recommendations should be validated against data readiness, business priority, controls, and implementation effort.</p>
+</section>
+{% endif %}
+{% endblock %}

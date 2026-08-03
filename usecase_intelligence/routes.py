@@ -11,6 +11,75 @@ import os
 uci_bp = Blueprint('uci_bp', __name__, url_prefix='/uci')
 
 
+DEMO_SCENARIOS = {
+    'Insurance_Ops': {
+        'customer': 'Northstar Specialty Insurance',
+        'call_date': '18 July 2026',
+        'digitised_use_cases': [
+            'New Business Submission Intake & Triage',
+            'Risk Data Extraction & Structuring',
+            'Policy Issuance',
+            'Invoice Generation',
+            'Payment Matching & Reconciliation',
+        ],
+        'adjacent_use_cases': [
+            {
+                'name': 'Submission Prioritisation & Scoring',
+                'why': 'It builds on the structured submission data already captured and can direct underwriters to the highest-value and most time-sensitive risks.',
+            },
+            {
+                'name': 'Appetite Matching & Risk Qualification',
+                'why': 'The existing intake and extraction workflow provides the fields needed to identify out-of-appetite submissions earlier.',
+            },
+            {
+                'name': 'Claims Triage & Severity Scoring',
+                'why': 'The same document extraction and routing patterns can be reused in claims, reducing delivery effort while extending value.',
+            },
+        ],
+        'transcript': [
+            ('Consultant', 'Could you walk me through the parts of insurance operations that are digitised today?'),
+            ('Customer', 'New business submissions arrive through our digital intake workflow and are triaged into the underwriting queue.'),
+            ('Customer', 'We also extract and structure the core risk data before it reaches an underwriter, although the underwriting decision itself remains manual.'),
+            ('Customer', 'Once a risk is bound, policy issuance and invoice generation run in our policy platform.'),
+            ('Customer', 'Payment matching and reconciliation are digitised too, with an operations analyst handling exceptions.'),
+            ('Consultant', 'That gives us a strong data foundation. We will map those capabilities and identify the closest opportunities that reuse them.'),
+        ],
+    },
+    'Analytics': {
+        'customer': 'Aperture Consumer Products',
+        'call_date': '22 July 2026',
+        'digitised_use_cases': [
+            'Capital Budgeting & Forecasting',
+            'Reconciliation of Financial & Operational Systems',
+            'Management Reporting / KPI Analysis',
+            'Cash Flow Forecasting',
+            'Business Performance Reporting',
+        ],
+        'adjacent_use_cases': [
+            {
+                'name': 'What-if Analysis & Scenario Modelling',
+                'why': 'It can reuse the reconciled finance and operational data already feeding capital forecasts to compare decisions more quickly.',
+            },
+            {
+                'name': 'KPI Analysis & Benchmarking',
+                'why': 'The current KPI and performance reporting layer supplies governed measures that can be extended into consistent internal and external benchmarks.',
+            },
+            {
+                'name': 'Demand Planning & Forecasting',
+                'why': 'Combining existing cash-flow and performance signals with demand drivers connects financial planning more directly to operations.',
+            },
+        ],
+        'transcript': [
+            ('Consultant', 'Which analytics use cases are already digitised across the organisation?'),
+            ('Customer', 'Finance runs capital budgeting and forecasting in our planning platform, supported by a digital reconciliation between finance and operational systems.'),
+            ('Customer', 'Management KPI analysis and business performance reporting are delivered through governed dashboards.'),
+            ('Customer', 'Treasury also has a digitised cash-flow forecast. Teams still interpret the outputs and agree actions manually.'),
+            ('Consultant', 'We will mark those as digitised, then look for adjacent use cases that can reuse the same data, controls, and reporting layer.'),
+        ],
+    },
+}
+
+
 @uci_bp.route('')
 def uci_index():
     import csv, json as _json, os
@@ -63,6 +132,7 @@ def uci_index():
             edge_count=0,
             dataset_options=[],
             selected_dataset=None,
+            demo_scenario=None,
         )
 
     requested_dataset = (request.args.get('dataset') or '').strip()
@@ -109,6 +179,26 @@ def uci_index():
         edge_count=len(edges),
         dataset_options=[{'prefix': d['prefix'], 'label': d['label']} for d in dataset_options],
         selected_dataset=selected_option['prefix'],
+        demo_scenario=DEMO_SCENARIOS.get(selected_option['prefix']),
+    )
+
+
+@uci_bp.route('/demo/<document_type>')
+def uci_demo_document(document_type):
+    if document_type not in ('transcript', 'report'):
+        return 'Not found', 404
+
+    dataset = (request.args.get('dataset') or '').strip()
+    scenario = DEMO_SCENARIOS.get(dataset)
+    if not scenario:
+        return 'Demo scenario not found', 404
+
+    return render_template(
+        'usecase-intelligence/demo-document.html',
+        active='uci',
+        document_type=document_type,
+        dataset=dataset,
+        scenario=scenario,
     )
 
 
